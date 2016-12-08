@@ -1,0 +1,44 @@
+/*
+	Aproximacion al problema del cambio usando backtracking. Pseudocodigo creado usando sintaxis C.
+*/
+//Funcion de entrada para ocultar la funcion de backtracking.
+int devolver_cambio(int longitud_monedas, int[] monedas, int[] cantidades_monedas, int cantidad)
+{
+	return cambio(0, longitud_monedas, monedas, cantidad);
+}
+
+//Funcion de backtracking.
+int cambio(int idxMoneda, int longitud_monedas, int[] monedas, int[] cantidades_monedas, int cantidad)
+{
+	//No hay que devolver nada
+	if(cantidad == 0)
+		return 0;	//Devuelve 0 como cantidad de monedas
+	//Comprobar si se puede llegar a devolver cambio
+	if(idxMoneda < longitud_monedas && cantidad > 0)
+	{
+		//Toma un maximo numero de monedas a analizar, dependiente de la cantidad a devolver
+		int factor_moneda = cantidad/monedas[idxMoneda];
+		//Toma como maximo el minimo entre el numero de monedas que se podrian utilizar de ese tipo y las que hay realmente
+		int maximo_valor = (factor_moneda < cantidades_monedas[idxMoneda])? factor_moneda : cantidades_monedas[idxMoneda];
+		//Establece un coste minimo preliminar
+		int minimo_coste = INT_MAX;
+		//Itera por todas las posibles combinaciones de monedas
+		for(int x=0; x<maximo_valor; x++)
+		{
+			//Si hace falta devolver mas
+			if(cantidad >= x*monedas[idxMoneda])
+			{
+				//Obtiene la mejor combinacion con el resto de monedas
+				int res = cambio(idxMoneda + 1, longitud_monedas, monedas, cantidad - x*monedas[idxMoneda]);
+				//Comprueba si hay solucion
+				if(res != -1)
+					//Si la hay, comprueba si mejora la actual
+					minimo_coste = (res + x < minimo_coste)? res+x : minimo_coste;
+			}
+		}
+		//Devuelve la solucion, de haberla, o -1
+		return (minimo_coste == INT_MAX)? -1:minimo_coste;
+	}
+	//No existe solucion; devuelve -1
+	return -1;
+}
