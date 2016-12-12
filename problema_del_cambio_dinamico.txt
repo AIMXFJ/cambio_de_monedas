@@ -14,7 +14,7 @@ int cambio(int monedas[], int[] cantidad_monedas, int m, int n)
 	}
 	
 	//Llenamos el resto de entradas con una aproximacion de abajo a arriba.
-	for(i=1; i<n+1; i++)
+	for(i=0; i<m; i++)
 	{
 		//Rellena todos los casos que tenga sentido rellenar
 		for(j=0; j<cantidad_monedas[i]; j++)
@@ -29,7 +29,7 @@ int cambio(int monedas[], int[] cantidad_monedas, int m, int n)
 		//Rellena los casos imposibles con lo que hubiese en los anteriores para poder situar el resultado al final
 		for(j=cantidad_monedas[i]; j<m; j++)
 		{
-			tabla[i][j] = (j-1 >= 0)? tabla[i][j] : 0;
+			tabla[i][j] = (j-1 >= 0)? tabla[i][j-1] : 0;
 		}
 	}
 	//Como viene siendo habitual en estos casos, el ultimo elemento de la tabla es la solucion deseada.
