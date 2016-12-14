@@ -9,6 +9,8 @@ import devolvercambio.DevolverCambio;
 import java.awt.FlowLayout;
 import java.util.List;
 import java.util.Arrays;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.Box;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -22,9 +24,9 @@ import javax.swing.border.EmptyBorder;
  */
 public class menu extends javax.swing.JFrame {
 
-    int[] tiposMonedas;
-    int totalMonedasDisponibles;
-    int[] monedasDisponibles;
+    int[] tiposMonedas = {1,2,3,4};
+    int totalMonedasDisponibles = 54;
+    int[] monedasDisponibles = {12,13,14,15};
 
     /**
      * Creates new form menu
@@ -130,10 +132,21 @@ public class menu extends javax.swing.JFrame {
     private void jButtonCalcularActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonCalcularActionPerformed
         // TODO add your handling code here:
         DevolverCambio cambiador = new DevolverCambio();
-        this.jTextResultadoBacktracking.setText(Integer.toString(cambiador.devolverCambioBackTracking(monedasDisponibles, tiposMonedas, totalMonedasDisponibles)));
-        this.jTextResultadoDinamico.setText(Integer.toString(cambiador.devolverCambioDinamico(tiposMonedas, monedasDisponibles, tiposMonedas.length, totalMonedasDisponibles)));
+        int cambio = Integer.parseInt(jTextCantidad.getText());
+        calcularDinamico(cambiador, cambio);
+        calcularBacktracking(cambiador, cambio);       
     }//GEN-LAST:event_jButtonCalcularActionPerformed
 
+    private void calcularDinamico(DevolverCambio cambiador, int cambio)
+    {
+        this.jTextResultadoDinamico.setText(Integer.toString(cambiador.devolverCambioDinamico(tiposMonedas, monedasDisponibles, tiposMonedas.length, cambio)));
+    }
+    
+    private void calcularBacktracking(DevolverCambio cambiador, int cambio)
+    {
+        this.jTextResultadoBacktracking.setText(Integer.toString(cambiador.devolverCambioBackTracking(tiposMonedas, monedasDisponibles, cambio))); 
+    }
+    
     private void jMenuItemConfiguracionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemConfiguracionActionPerformed
         JTextField tiposField = new JTextField("", 6);
         JTextField valoresField = new JTextField("", 6);
