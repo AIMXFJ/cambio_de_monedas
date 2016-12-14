@@ -133,10 +133,31 @@ public class menu extends javax.swing.JFrame {
         // TODO add your handling code here:
         DevolverCambio cambiador = new DevolverCambio();
         int cambio = Integer.parseInt(jTextCantidad.getText());
-        calcularDinamico(cambiador, cambio);
-        calcularBacktracking(cambiador, cambio);       
+        if(esViable(cambio))
+        {
+            calcularDinamico(cambiador, cambio);
+            calcularBacktracking(cambiador, cambio);
+        }
+        else
+        {
+            this.jTextResultadoDinamico.setText("0");
+            this.jTextResultadoBacktracking.setText("0");
+            JOptionPane.showMessageDialog(this,
+                        "Es imposible devolver "+cambio+" con las monedas existentes.",
+                        "No existe solución",
+                        JOptionPane.ERROR_MESSAGE);
+        }
     }//GEN-LAST:event_jButtonCalcularActionPerformed
 
+    private boolean esViable(int cambio)
+    {
+        int total = 0;
+        for(int i=0; i<tiposMonedas.length; i++)
+            total += tiposMonedas[i]*monedasDisponibles[i];
+        System.out.println(total);
+        return cambio <= total;
+    }
+    
     private void calcularDinamico(DevolverCambio cambiador, int cambio)
     {
         this.jTextResultadoDinamico.setText(Integer.toString(cambiador.devolverCambioDinamico(tiposMonedas, monedasDisponibles, tiposMonedas.length, cambio)));
