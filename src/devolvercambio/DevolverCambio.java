@@ -67,8 +67,8 @@ public class DevolverCambio {
                         int cantidadReal = cantidadesMonedas[idxMoneda];
                         cantidadesMonedas[idxMoneda] = 0;
                         if(i != idxMoneda)
-                             temp = paso_intermedio_backtracking(idxMoneda + 1, monedas, 
-                            cantidadesMonedas, cantidad-x*cantidadesMonedas[idxMoneda]);
+                             temp = paso_intermedio_backtracking(i, monedas, 
+                            cantidadesMonedas, cantidad-x*monedas[idxMoneda]);
                         if(temp > -1)
                             if(res > -1)
                                 res = (temp < res)? temp:res;
@@ -106,7 +106,7 @@ public class DevolverCambio {
             //Establece un coste minimo preliminar
             int minimo_coste = Integer.MAX_VALUE;
             //Itera por todas las posibles combinaciones de monedas
-            for (int x = 1; x <= maximo_valor; x++) {
+            for (int x = 0; x <= maximo_valor; x++) {
                 //Si hace falta devolver mas
                 if (cantidad >= x * monedas[idxMoneda]) {
                     //Obtiene la mejor combinacion con el resto de monedas
@@ -117,8 +117,8 @@ public class DevolverCambio {
                         int cantidadReal = cantidadesMonedas[idxMoneda];
                         cantidadesMonedas[idxMoneda] = 0;
                         if(i != idxMoneda)
-                             temp = backtracking(idxMoneda + 1, monedas, 
-                            cantidadesMonedas, cantidad-x*cantidadesMonedas[idxMoneda]);
+                             temp = backtracking(i, monedas, 
+                            cantidadesMonedas, cantidad-x*monedas[idxMoneda]);
                         if(temp > -1)
                             if(res > -1)
                                 res = (temp < res)? temp:res;
