@@ -28,6 +28,40 @@ public class DevolverCambio {
         System.err.println(mensaje);
     }
     
+    public int devolverCambioVoraz(int[] monedas, int[] cantidadesMonedas, int cantidad){
+        return voraz(monedas, cantidadesMonedas, cantidad);
+    }
+    
+    private int voraz(int[] monedas, int[] cantidadMonedas, int cantidad){
+        int factorMoneda = 0;
+        int resultado = 0;
+        int maximoValor = 0;
+        
+        int[] cantidadesOrdenadas = cantidadMonedas.clone();
+        int[] monedasOrdenadas = monedas.clone();
+        
+        //Reordenamos las monedas de mayor a menor
+        //REORDENAR ARRAY
+        
+        //Hay que empezar por las monedas mayores ya que si no es mas dificil ncontrar solucion
+        for(int i=0; i<monedasOrdenadas.length;i++){
+            if(cantidad > 0 && cantidadesOrdenadas[i]>0){
+                System.err.println("Paso " + i + "\n    factor: " + factorMoneda + "\n    cantidad: " + cantidad + "\n    resultado: " + resultado);
+                //Calculamos cuantas monedas tenemos que usar para acercarnos al resultado lo más posible
+                //con el menor numero de monedas posibles.
+                factorMoneda = cantidad/monedasOrdenadas[i];
+                maximoValor = (factorMoneda < cantidadesOrdenadas[i]) ? factorMoneda : cantidadesOrdenadas[i];
+                resultado += maximoValor;
+                cantidad -= maximoValor * monedasOrdenadas[i];
+                cantidadesOrdenadas[i] -= maximoValor;
+                System.err.println("Paso " + i + "\n    factor: " + factorMoneda + "\n    cantidad: " + cantidad + "\n    resultado: " + resultado + "\n    maximoValor: " + maximoValor);
+            }
+        }
+        
+        System.err.println("Paso FINAL"+ "\n    factor: " + factorMoneda + "\n    cantidad: " + cantidad + "\n    resultado: " + resultado);
+        return resultado;
+    }
+    
     public int devolverCambioBackTracking(int[] monedas, int[] cantidadesMonedas, int cantidad) {
         int minimo = Integer.MAX_VALUE;
         for(int i=0; i<monedas.length; i++)

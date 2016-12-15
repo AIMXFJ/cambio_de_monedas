@@ -24,9 +24,13 @@ import javax.swing.border.EmptyBorder;
  */
 public class menu extends javax.swing.JFrame {
 
-    int[] tiposMonedas = {1,2,3,4};
+    /*int[] tiposMonedas = {1,2,3,4};
     int totalMonedasDisponibles = 54;
-    int[] monedasDisponibles = {12,13,14,15};
+    int[] monedasDisponibles = {12,13,14,15};*/
+    
+    int[] tiposMonedas = {4,3,2,1};
+    int totalMonedasDisponibles = 54;
+    int[] monedasDisponibles = {15,14,13,12};
 
     /**
      * Creates new form menu
@@ -46,11 +50,14 @@ public class menu extends javax.swing.JFrame {
 
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
-        jButtonCalcular = new javax.swing.JButton();
+        jButtonCalcularVoraz = new javax.swing.JButton();
         jTextCantidad = new javax.swing.JTextField();
-        jTextResultadoDinamico = new javax.swing.JTextField();
-        jTextResultadoBacktracking = new javax.swing.JTextField();
+        jTextResultado = new javax.swing.JTextField();
+        jButtonCalcularBacktracking = new javax.swing.JButton();
+        jButtonCalcularDinamica = new javax.swing.JButton();
         jLabel3 = new javax.swing.JLabel();
+        jTextTiempo = new javax.swing.JTextField();
+        jLabel4 = new javax.swing.JLabel();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
         jMenuItemConfiguracion = new javax.swing.JMenuItem();
@@ -59,20 +66,36 @@ public class menu extends javax.swing.JFrame {
 
         jLabel1.setText("Cantidad a cambiar:");
 
-        jLabel2.setText("Resultado Backtracking:");
+        jLabel2.setText("Resultado:");
 
-        jButtonCalcular.setText("Calcular");
-        jButtonCalcular.addActionListener(new java.awt.event.ActionListener() {
+        jButtonCalcularVoraz.setText("Calcular Voraz");
+        jButtonCalcularVoraz.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButtonCalcularActionPerformed(evt);
+                jButtonCalcularVorazActionPerformed(evt);
             }
         });
 
-        jTextResultadoDinamico.setEditable(false);
+        jTextResultado.setEditable(false);
 
-        jTextResultadoBacktracking.setEditable(false);
+        jButtonCalcularBacktracking.setText("Calcular Backtracking");
+        jButtonCalcularBacktracking.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonCalcularBacktrackingActionPerformed(evt);
+            }
+        });
 
-        jLabel3.setText("Resultado Prog.Dinámica");
+        jButtonCalcularDinamica.setText("Calcular Dinamica");
+        jButtonCalcularDinamica.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonCalcularDinamicaActionPerformed(evt);
+            }
+        });
+
+        jLabel3.setText("Tiempo que ha tardado:");
+
+        jTextTiempo.setEditable(false);
+
+        jLabel4.setText("(En milisegundos)");
 
         jMenu1.setText("Admin");
 
@@ -92,19 +115,32 @@ public class menu extends javax.swing.JFrame {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addContainerGap(21, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addComponent(jButtonCalcularVoraz)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jButtonCalcularBacktracking)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jButtonCalcularDinamica)
+                        .addGap(18, 18, 18))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(jLabel3)
+                            .addComponent(jLabel2)
+                            .addComponent(jLabel4))
+                        .addGap(28, 28, 28)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(jTextResultado, javax.swing.GroupLayout.DEFAULT_SIZE, 100, Short.MAX_VALUE)
+                            .addComponent(jTextTiempo))
+                        .addGap(107, 107, 107))))
             .addGroup(layout.createSequentialGroup()
-                .addGap(74, 74, 74)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jLabel3)
-                    .addComponent(jLabel2)
-                    .addComponent(jLabel1))
+                .addGap(95, 95, 95)
+                .addComponent(jLabel1)
                 .addGap(28, 28, 28)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jButtonCalcular)
-                    .addComponent(jTextCantidad, javax.swing.GroupLayout.PREFERRED_SIZE, 84, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jTextResultadoDinamico)
-                    .addComponent(jTextResultadoBacktracking, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(79, Short.MAX_VALUE))
+                .addComponent(jTextCantidad, javax.swing.GroupLayout.PREFERRED_SIZE, 84, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -113,41 +149,46 @@ public class menu extends javax.swing.JFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel1)
                     .addComponent(jTextCantidad, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jButtonCalcular)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 51, Short.MAX_VALUE)
+                .addGap(18, 18, 18)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jButtonCalcularVoraz)
+                    .addComponent(jButtonCalcularBacktracking)
+                    .addComponent(jButtonCalcularDinamica))
+                .addGap(33, 33, 33)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel2)
-                    .addComponent(jTextResultadoBacktracking, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(23, 23, 23)
+                    .addComponent(jTextResultado, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jTextResultadoDinamico, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel3))
-                .addGap(60, 60, 60))
+                    .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jTextTiempo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jLabel4)
+                .addContainerGap(46, Short.MAX_VALUE))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jButtonCalcularActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonCalcularActionPerformed
-        // TODO add your handling code here:
+    private void jButtonCalcularVorazActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonCalcularVorazActionPerformed
         DevolverCambio cambiador = new DevolverCambio();
         int cambio = Integer.parseInt(jTextCantidad.getText());
         if(esViable(cambio))
         {
-            calcularDinamico(cambiador, cambio);
-            calcularBacktracking(cambiador, cambio);
+            long tiempoIni = System.currentTimeMillis();
+            calcularVoraz(cambiador, cambio);
+            long tiempoFin = System.currentTimeMillis();
+            this.jTextTiempo.setText(Long.toString(tiempoFin - tiempoIni));
         }
         else
         {
-            this.jTextResultadoDinamico.setText("0");
-            this.jTextResultadoBacktracking.setText("0");
+            this.jTextResultado.setText("0");
             JOptionPane.showMessageDialog(this,
                         "Es imposible devolver "+cambio+" con las monedas existentes.",
                         "No existe solución",
                         JOptionPane.ERROR_MESSAGE);
         }
-    }//GEN-LAST:event_jButtonCalcularActionPerformed
+    }//GEN-LAST:event_jButtonCalcularVorazActionPerformed
 
     private boolean esViable(int cambio)
     {
@@ -160,12 +201,17 @@ public class menu extends javax.swing.JFrame {
     
     private void calcularDinamico(DevolverCambio cambiador, int cambio)
     {
-        this.jTextResultadoDinamico.setText(Integer.toString(cambiador.devolverCambioDinamico(tiposMonedas, monedasDisponibles, tiposMonedas.length, cambio)));
+        this.jTextResultado.setText(Integer.toString(cambiador.devolverCambioDinamico(tiposMonedas, monedasDisponibles, tiposMonedas.length, cambio)));
+    }
+    
+    private void calcularVoraz(DevolverCambio cambiador, int cambio)
+    {
+        this.jTextResultado.setText(Integer.toString(cambiador.devolverCambioVoraz(tiposMonedas, monedasDisponibles, cambio)));
     }
     
     private void calcularBacktracking(DevolverCambio cambiador, int cambio)
     {
-        this.jTextResultadoBacktracking.setText(Integer.toString(cambiador.devolverCambioBackTracking(tiposMonedas, monedasDisponibles, cambio))); 
+        this.jTextResultado.setText(Integer.toString(cambiador.devolverCambioBackTracking(tiposMonedas, monedasDisponibles, cambio))); 
     }
     
     private void jMenuItemConfiguracionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemConfiguracionActionPerformed
@@ -228,6 +274,46 @@ public class menu extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_jMenuItemConfiguracionActionPerformed
 
+    private void jButtonCalcularBacktrackingActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonCalcularBacktrackingActionPerformed
+        DevolverCambio cambiador = new DevolverCambio();
+        int cambio = Integer.parseInt(jTextCantidad.getText());
+        if(esViable(cambio))
+        {
+            long tiempoIni = System.currentTimeMillis();
+            calcularBacktracking(cambiador, cambio);
+            long tiempoFin = System.currentTimeMillis();
+            this.jTextTiempo.setText(Long.toString(tiempoFin - tiempoIni));
+        }
+        else
+        {
+            this.jTextResultado.setText("0");
+            JOptionPane.showMessageDialog(this,
+                        "Es imposible devolver "+cambio+" con las monedas existentes.",
+                        "No existe solución",
+                        JOptionPane.ERROR_MESSAGE);
+        }
+    }//GEN-LAST:event_jButtonCalcularBacktrackingActionPerformed
+
+    private void jButtonCalcularDinamicaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonCalcularDinamicaActionPerformed
+        DevolverCambio cambiador = new DevolverCambio();
+        int cambio = Integer.parseInt(jTextCantidad.getText());
+        if(esViable(cambio))
+        {
+            long tiempoIni = System.currentTimeMillis();
+            calcularDinamico(cambiador, cambio);
+            long tiempoFin = System.currentTimeMillis();
+            this.jTextTiempo.setText(Long.toString(tiempoFin - tiempoIni));
+        }
+        else
+        {
+            this.jTextResultado.setText("0");
+            JOptionPane.showMessageDialog(this,
+                        "Es imposible devolver "+cambio+" con las monedas existentes.",
+                        "No existe solución",
+                        JOptionPane.ERROR_MESSAGE);
+        }
+    }//GEN-LAST:event_jButtonCalcularDinamicaActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -264,15 +350,18 @@ public class menu extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jButtonCalcular;
+    private javax.swing.JButton jButtonCalcularBacktracking;
+    private javax.swing.JButton jButtonCalcularDinamica;
+    private javax.swing.JButton jButtonCalcularVoraz;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
     private javax.swing.JMenu jMenu1;
     private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JMenuItem jMenuItemConfiguracion;
     private javax.swing.JTextField jTextCantidad;
-    private javax.swing.JTextField jTextResultadoBacktracking;
-    private javax.swing.JTextField jTextResultadoDinamico;
+    private javax.swing.JTextField jTextResultado;
+    private javax.swing.JTextField jTextTiempo;
     // End of variables declaration//GEN-END:variables
 }
