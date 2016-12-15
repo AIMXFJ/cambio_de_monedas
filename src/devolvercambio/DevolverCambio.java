@@ -149,38 +149,54 @@ public class DevolverCambio {
         int[][] tabla = new int[m][n+1];
         mostrarMensaje("Dinámica:\tCreada tabla de "+(n+1)+"x"+m+".");
         //Llenar las entradas para el caso n=0.
-        for (i = 0; i < n; i++) {
+        for (i = 0; i < monedas.length; i++) {
             mostrarMensaje("Dinámica:\tCreando caso base.");
-            tabla[0][i] = 0;
+            tabla[i][0] = 0;
         }
 
         //Llenamos el resto de entradas con una aproximacion de abajo a arriba.
-        for (i = 0; i < m; i++) {
-            mostrarMensaje("Dinámica:\tEvaluando monedas de "+monedas[i]+":");
-            int limite = (n+1<cantidadMonedas[i]*monedas[i])? n+1:cantidadMonedas[i]+1;
-            mostrarMensaje("Dinámica:\tSe evaluarán hasta "+(limite-1)+" monedas.");
-            //Rellena todos los casos que tenga sentido rellenar
-            for (j = 1; j < limite; j++) {
-                mostrarMensaje("\t\t\t->Evaluando con "+j+" monedas.");
-                // Cuenta de las soluciones que incluyen monedas[j]
-                x = (j - monedas[i] >= 0) ? tabla[i][j-monedas[i]] : 0;
-                x = (x+1 <= n)? x+1:x;
-                //Cuenta de las soluciones que no incluyen monedas[j]
-                y = (j >= 1 && j<tabla[i].length) ? tabla[i][j] : 0;
-                // Cuenta de todas las soluciones
-                if(i<0 || i>=tabla.length) mostrarError("Dinámica:\ti está fuera de rango");
-                else if(j<0||j>=tabla[i].length)
-                    mostrarError("Dinámica:\tj está fuera de rango");
-                else
-                    tabla[i][j] = x + y;
-            escribirTabla(tabla);
-            System.out.println();
-            }
-            //Rellena los casos imposibles con lo que hubiese en los anteriores para poder situar el resultado al final
-            for (j = cantidadMonedas[i]; j < m; j++) {
-                tabla[i][j] = (j - 1 >= 0) ? tabla[i][j - 1] : 0;
-            }
-        }
+       for(i =0; i< tabla.length; i++)
+	   {
+		for(j=0; j<tabla[i].length; j++)
+		{
+                    mostrarMensaje("Dinámica:\tevaluando caso: ("+i+","+j+")");
+                    if(i==0 && j<monedas[i])
+                    {
+                        mostrarMensaje("\t\t\t->Sin solución.");
+                        tabla[i][j] = 0;
+                    }
+                    else if (i==0){
+                        mostrarMensaje("\t\t\t->Tomando valor de ("+i+","+
+                                (j-monedas[i])+").");
+                        tabla[i][j] = 1+tabla[i][j-monedas[i]];
+                    }
+                    else if(j<monedas[i]){
+                        mostrarMensaje("\t\t\t->Tomando valor de ("+(i-1)+","+
+                                j+").");
+                        tabla[i][j] = tabla[i-1][j];
+                    }
+                    else{
+                        mostrarMensaje("\t\t\t->Determinando mínimo entre ("+i+","+
+                                (j-monedas[i])+") y ("+(i-1)+","+
+                                j+").");
+                        if(tabla[i-1][j]<1+tabla[i][j-monedas[i]])
+                        {
+                            mostrarMensaje("\t\t\t->Tomando valor de ("+(i-1)+","+
+                                j+").");
+                            tabla[i][j] = tabla[i-1][j];
+                        }
+                        else
+                        {
+                             mostrarMensaje("\t\t\t->Tomando valor de ("+i+","+
+                                (j-monedas[i])+").");
+                            tabla[i][j] = 1+tabla[i][j-monedas[i]];
+                        }
+                            
+                    }
+                    escribirTabla(tabla);
+                    System.out.println();
+		}
+	   }
         //Como viene siendo habitual en estos casos, el ultimo elemento de la tabla es la solucion deseada.
         return tabla[m-1][n];
     }
