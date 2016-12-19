@@ -1,0 +1,25 @@
+/*
+	Pseudo codigo del algoritmo voraz en lenguaje C
+*/
+    int cambio_voraz(int[] monedas, int[] cantidadMonedas, int cantidad) {
+        int factorMoneda = 0;
+        int resultado = 0;
+        int maximoValor = 0;
+
+        //Reordenamos las monedas de mayor a menor, en este caso sería mediante quicksort
+        reordenar(monedas, cantidadMonedas, 0, monedas.length - 1);
+
+        //Hay que empezar por las monedas mayores ya que si no es mas dificil encontrar solucion
+        for (int i = 0; i < monedas.length; i++) {
+            if (cantidad > 0 && cantidadMonedas[i] > 0) {
+                //Calculamos cuantas monedas tenemos que usar para acercarnos al resultado lo más posible
+                //con el menor numero de monedas posibles.
+                factorMoneda = cantidad / monedas[i];
+                maximoValor = (factorMoneda < cantidadMonedas[i]) ? factorMoneda : cantidadMonedas[i];
+                resultado += maximoValor;
+                cantidad -= maximoValor * monedas[i];
+                cantidadMonedas[i] -= maximoValor;
+            }
+        }
+        return resultado;
+    }

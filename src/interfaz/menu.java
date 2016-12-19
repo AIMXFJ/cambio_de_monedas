@@ -24,14 +24,13 @@ import javax.swing.border.EmptyBorder;
  */
 public class menu extends javax.swing.JFrame {
 
-    /*int[] tiposMonedas = {1,2,3,4};
+    /*int[] tiposMonedas = {1, 2, 3, 4};
     int totalMonedasDisponibles = 54;
-    int[] monedasDisponibles = {12,13,14,15};*/
-    
+    int[] monedasDisponibles = {12, 13, 14, 15};*/
+
     int[] tiposMonedas = {4,3,2,1};
     int totalMonedasDisponibles = 54;
     int[] monedasDisponibles = {15,14,13,12};
-
     /**
      * Creates new form menu
      */
@@ -173,47 +172,41 @@ public class menu extends javax.swing.JFrame {
     private void jButtonCalcularVorazActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonCalcularVorazActionPerformed
         DevolverCambio cambiador = new DevolverCambio();
         int cambio = Integer.parseInt(jTextCantidad.getText());
-        if(esViable(cambio))
-        {
+        if (esViable(cambio)) {
             long tiempoIni = System.currentTimeMillis();
             calcularVoraz(cambiador, cambio);
             long tiempoFin = System.currentTimeMillis();
             this.jTextTiempo.setText(Long.toString(tiempoFin - tiempoIni));
-        }
-        else
-        {
+        } else {
             this.jTextResultado.setText("0");
             JOptionPane.showMessageDialog(this,
-                        "Es imposible devolver "+cambio+" con las monedas existentes.",
-                        "No existe solución",
-                        JOptionPane.ERROR_MESSAGE);
+                    "Es imposible devolver " + cambio + " con las monedas existentes.",
+                    "No existe solución",
+                    JOptionPane.ERROR_MESSAGE);
         }
     }//GEN-LAST:event_jButtonCalcularVorazActionPerformed
 
-    private boolean esViable(int cambio)
-    {
+    private boolean esViable(int cambio) {
         int total = 0;
-        for(int i=0; i<tiposMonedas.length; i++)
-            total += tiposMonedas[i]*monedasDisponibles[i];
+        for (int i = 0; i < tiposMonedas.length; i++) {
+            total += tiposMonedas[i] * monedasDisponibles[i];
+        }
         System.out.println(total);
         return cambio <= total;
     }
-    
-    private void calcularDinamico(DevolverCambio cambiador, int cambio)
-    {
+
+    private void calcularDinamico(DevolverCambio cambiador, int cambio) {
         this.jTextResultado.setText(Integer.toString(cambiador.devolverCambioDinamico(tiposMonedas, monedasDisponibles, tiposMonedas.length, cambio)));
     }
-    
-    private void calcularVoraz(DevolverCambio cambiador, int cambio)
-    {
+
+    private void calcularVoraz(DevolverCambio cambiador, int cambio) {
         this.jTextResultado.setText(Integer.toString(cambiador.devolverCambioVoraz(tiposMonedas, monedasDisponibles, cambio)));
     }
-    
-    private void calcularBacktracking(DevolverCambio cambiador, int cambio)
-    {
-        this.jTextResultado.setText(Integer.toString(cambiador.devolverCambioBackTracking(tiposMonedas, monedasDisponibles, cambio))); 
+
+    private void calcularBacktracking(DevolverCambio cambiador, int cambio) {
+        this.jTextResultado.setText(Integer.toString(cambiador.devolverCambioBackTracking(tiposMonedas, monedasDisponibles, cambio)));
     }
-    
+
     private void jMenuItemConfiguracionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemConfiguracionActionPerformed
         JTextField tiposField = new JTextField("", 6);
         JTextField valoresField = new JTextField("", 6);
@@ -277,40 +270,34 @@ public class menu extends javax.swing.JFrame {
     private void jButtonCalcularBacktrackingActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonCalcularBacktrackingActionPerformed
         DevolverCambio cambiador = new DevolverCambio();
         int cambio = Integer.parseInt(jTextCantidad.getText());
-        if(esViable(cambio))
-        {
+        if (esViable(cambio)) {
             long tiempoIni = System.currentTimeMillis();
             calcularBacktracking(cambiador, cambio);
             long tiempoFin = System.currentTimeMillis();
             this.jTextTiempo.setText(Long.toString(tiempoFin - tiempoIni));
-        }
-        else
-        {
+        } else {
             this.jTextResultado.setText("0");
             JOptionPane.showMessageDialog(this,
-                        "Es imposible devolver "+cambio+" con las monedas existentes.",
-                        "No existe solución",
-                        JOptionPane.ERROR_MESSAGE);
+                    "Es imposible devolver " + cambio + " con las monedas existentes.",
+                    "No existe solución",
+                    JOptionPane.ERROR_MESSAGE);
         }
     }//GEN-LAST:event_jButtonCalcularBacktrackingActionPerformed
 
     private void jButtonCalcularDinamicaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonCalcularDinamicaActionPerformed
         DevolverCambio cambiador = new DevolverCambio();
         int cambio = Integer.parseInt(jTextCantidad.getText());
-        if(esViable(cambio))
-        {
+        if (esViable(cambio)) {
             long tiempoIni = System.currentTimeMillis();
             calcularDinamico(cambiador, cambio);
             long tiempoFin = System.currentTimeMillis();
             this.jTextTiempo.setText(Long.toString(tiempoFin - tiempoIni));
-        }
-        else
-        {
+        } else {
             this.jTextResultado.setText("0");
             JOptionPane.showMessageDialog(this,
-                        "Es imposible devolver "+cambio+" con las monedas existentes.",
-                        "No existe solución",
-                        JOptionPane.ERROR_MESSAGE);
+                    "Es imposible devolver " + cambio + " con las monedas existentes.",
+                    "No existe solución",
+                    JOptionPane.ERROR_MESSAGE);
         }
     }//GEN-LAST:event_jButtonCalcularDinamicaActionPerformed
 
