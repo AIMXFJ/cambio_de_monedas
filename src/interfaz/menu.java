@@ -218,7 +218,7 @@ public class menu extends javax.swing.JFrame {
     }
 
     private void calcularBacktracking(DevolverCambio cambiador, double cambio) {
-        this.jTextResultado.setText(Integer.toString(cambiador.devolverCambioBackTracking(tiposMonedas, monedasDisponibles, cambio)));
+        this.jTextResultado.setText(arrayToString(cambiador.devolverCambioBackTracking(tiposMonedas, monedasDisponibles, cambio)));
     }
 
     private void jMenuItemConfiguracionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemConfiguracionActionPerformed
