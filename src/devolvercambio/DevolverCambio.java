@@ -44,33 +44,40 @@ public class DevolverCambio {
         //Reordenamos las monedas de mayor a menor
         this.quickSort(monedasOrdenadas, cantidadesOrdenadas, 0, monedasOrdenadas.length - 1);
 
-        for (int x = 0; x < monedasOrdenadas.length; x++) {
-            System.out.println("Array Ordenado en " + x + " -> " + monedasOrdenadas[x] + " | cantidad -> " + cantidadesOrdenadas[x]);
-        }
+        //for (int x = 0; x < monedasOrdenadas.length; x++) {
+          //  System.out.println("Array Ordenado en " + x + " -> " + monedasOrdenadas[x] + " | cantidad -> " + cantidadesOrdenadas[x]);
+        //}
 
         //Hay que empezar por las monedas mayores ya que si no es mas dificil ncontrar solucion
         for (int i = 0; i < monedasOrdenadas.length; i++) {
             if (cantidad > 0 && cantidadesOrdenadas[i] > 0) {
-                System.err.println("Paso " + i + "\n    factor: " + factorMoneda + "\n    cantidad: " + cantidad + "\n    resultado: " + resultado);
+                System.err.println("Paso Antes " + i + "\n    factor: " + factorMoneda + "\n    cantidad: " + cantidad + "\n    resultado: " + resultado);
                 //Calculamos cuantas monedas tenemos que usar para acercarnos al resultado lo más posible
                 //con el menor numero de monedas posibles.
                 factorMoneda = (int)(cantidad / monedasOrdenadas[i]);
                 maximoValor = (factorMoneda < cantidadesOrdenadas[i]) ? factorMoneda : cantidadesOrdenadas[i];
                 resultado += maximoValor;
-                resultadoTipos[i] += maximoValor;
+                resultadoTipos[resultadoTipos.length-i-1] += maximoValor;
+                System.out.println("Maximo valor: " + maximoValor + " | monedasOrdenadas en " + i + "  " + monedasOrdenadas[i]);
                 cantidad -= maximoValor * monedasOrdenadas[i];
                 cantidadesOrdenadas[i] -= maximoValor;
-                System.err.println("Paso " + i + "\n    factor: " + factorMoneda + "\n    cantidad: " + cantidad + "\n    resultado: " + resultado + "\n    maximoValor: " + maximoValor);
+                System.err.println("Paso Despues " + i + "\n    factor: " + factorMoneda + "\n    cantidad: " + cantidad + "\n    resultado: " + resultado + "\n    maximoValor: " + maximoValor);
             }
         }
 
         System.err.println("Paso FINAL" + "\n    factor: " + factorMoneda + "\n    cantidad: " + cantidad + "\n    resultado: " + resultado);
         return resultadoTipos;
     }
+    
+    private void inicializarArray(int[] array) {
+        for(int i = 0; i < array.length; i++)
+            array[i]=0;
+    }
 
-    public int devolverCambioBackTracking(double[] monedas, int[] cantidadesMonedas, double cantidad) {
+    public int[] devolverCambioBackTracking(double[] monedas, int[] cantidadesMonedas, double cantidad) {
         int minimo = Integer.MAX_VALUE;
         int[] resultadoTipos = new int[monedas.length];
+        int[] minimoActual = new int[monedas.length];
         
         inicializarArray(resultadoTipos);
         
@@ -79,14 +86,16 @@ public class DevolverCambio {
                     "€ como raíz.");
             if(monedas[i]>cantidad) break;
             int valor = backtracking(i, monedas, cantidadesMonedas, cantidad, resultadoTipos);
-            minimo = (valor < minimo && valor > -1) ? valor : minimo;
+            if(valor < minimo)
+            {
+                minimo = valor;
+                minimoActual = resultadoTipos.clone();
+            }
+            inicializarArray(resultadoTipos);
         }
-        return (int) minimo;
-    }
-    
-    private void inicializarArray(int[] array) {
-        for(int i = 0; i < array.length; i++)
-            array[i]=0;
+        resultadoTipos = minimoActual.clone();
+        mostrarMensaje("Backtracking:\tMínimo número total de monedas: "+minimo);
+        return resultadoTipos;
     }
 
     public int devolverCambioDinamico(double[] monedas, int[] cantidadMonedas, int m, double n) {
@@ -101,8 +110,6 @@ public class DevolverCambio {
         if (idxMoneda < monedas.length && cantidad > 0) {
             //Toma un maximo numero de monedas a analizar, dependiente de la cantidad a devolver
             int factorMoneda = (int)(cantidad / monedas[idxMoneda]);
-            mostrarMensaje("Cantidad a devolver: "+cantidad);
-            mostrarMensaje("Factor de moneda actual: "+factorMoneda);
             //Toma como maximo el minimo entre el numero de monedas que se podrian utilizar de ese tipo y las que hay realmente
             int maximo_valor = (factorMoneda < cantidadesMonedas[idxMoneda]) ? factorMoneda : cantidadesMonedas[idxMoneda];
             //Establece un coste minimo preliminar
@@ -111,8 +118,6 @@ public class DevolverCambio {
             for (int x = 1; x <= maximo_valor; x++) {
                 //Si hace falta devolver mas
                 if (cantidad >= x * monedas[idxMoneda]) {
-                    mostrarMensaje("\tProbando con "+x+"monedas. Valor total: "+
-                            (x*monedas[idxMoneda]));
                     //Obtiene la mejor combinacion con el resto de monedas
                     int res = -1;
                     for (int i = 0; i < monedas.length; i++) {
@@ -121,10 +126,7 @@ public class DevolverCambio {
                         int cantidadReal = cantidadesMonedas[idxMoneda];
                         cantidadesMonedas[idxMoneda] = 0;
                         if (i != idxMoneda) {
-                            mostrarMensaje("\tComprobando con monedas de "+monedas[i]
-                                +"€ a continuación.");
                             double cambio = cantidad - (double)(x*monedas[idxMoneda]);
-                            mostrarMensaje("\tCambio restante: "+cambio);
                             temp = paso_intermedio_backtracking(i, monedas,
                                     cantidadesMonedas, cambio, resultadoTipos);
                         }
@@ -141,8 +143,10 @@ public class DevolverCambio {
                     if (res != -1) //Si la hay, comprueba si mejora la actual
                     {
                         minimo_coste = (res + x < minimo_coste) ? res + x : minimo_coste;
+                        if(res+x == minimo_coste) resultadoTipos[idxMoneda] = x;
                     } else if (x * monedas[idxMoneda] == cantidad) {
                         minimo_coste = (x < minimo_coste) ? x : minimo_coste;
+                        if(x == minimo_coste) resultadoTipos[idxMoneda] = x;
                     }
                 }
             }
@@ -161,8 +165,6 @@ public class DevolverCambio {
         if (idxMoneda < monedas.length && cantidad > 0) {
             //Toma un maximo numero de monedas a analizar, dependiente de la cantidad a devolver
             int factorMoneda = (int) (cantidad / monedas[idxMoneda]);
-            mostrarMensaje("Cantidad a devolver: "+cantidad);
-            mostrarMensaje("Factor de moneda actual: "+factorMoneda);
             //Toma como maximo el minimo entre el numero de monedas que se podrian utilizar de ese tipo y las que hay realmente
             int maximo_valor = (factorMoneda < cantidadesMonedas[idxMoneda]) ? factorMoneda : cantidadesMonedas[idxMoneda];
             //Establece un coste minimo preliminar
@@ -171,20 +173,17 @@ public class DevolverCambio {
             for (int x = 0; x <= maximo_valor; x++) {
                 //Si hace falta devolver mas
                 if (cantidad >= x * monedas[idxMoneda]) {
-                    mostrarMensaje("\t\tProbando con "+x+"monedas. Valor total: "+
-                            (x*monedas[idxMoneda]));
                     //Obtiene la mejor combinacion con el resto de monedas
                     int res = -1;
                     for (int i = 0; i < monedas.length; i++) {
                         if(monedas[i]>cantidad) break;
-                         mostrarMensaje("\t\tComprobando con monedas de "+monedas[i]
-                                +"€ a continuación.");
                         int temp = -1;
                         int cantidadReal = cantidadesMonedas[idxMoneda];
                         cantidadesMonedas[idxMoneda] = 0;
-                        if (i != idxMoneda) {
-                            temp = backtracking(i, monedas,
-                                    cantidadesMonedas, cantidad - x * monedas[idxMoneda]);
+                        if (i != idxMoneda && cantidadesMonedas[i] > 0) {
+                            temp = paso_intermedio_backtracking(i, monedas,
+                                    cantidadesMonedas, cantidad - x * monedas[idxMoneda],
+                                    resultadoTipos);
                         }
                         if (temp > -1) {
                             if (res > -1) {
@@ -199,8 +198,10 @@ public class DevolverCambio {
                     if (res != -1) //Si la hay, comprueba si mejora la actual
                     {
                         minimo_coste = (res + x < minimo_coste) ? res + x : minimo_coste;
+                        if(res+x == minimo_coste) resultadoTipos[idxMoneda] = x;
                     } else if (x * monedas[idxMoneda] == cantidad) {
                         minimo_coste = (x < minimo_coste) ? x : minimo_coste;
+                        if(x == minimo_coste) resultadoTipos[idxMoneda] = x;
                     }
                 }
             }
@@ -215,11 +216,17 @@ public class DevolverCambio {
         int i, j, x = 0, y = 0;
         //Tabla de n+1 filas. Necesaria porque evaluamos el caso n = 0.
         int[][] tabla = null;
-        if(n<1) 
-            if(n<0.1)
-                tabla = new int[m][(int)(n/0.01+1)];
-            else tabla = new int[m][(int)(n/0.1+1)];
+        long parteEntera = (long)n;
+        if(n-parteEntera!=0) 
+            tabla = new int[m][(int)(n*10+1)];
         else tabla = new int[m][(int)(n+1)];
+        double[] monedasRef = monedas.clone();
+        int factor = ((double)(n-parteEntera)!=0)? 10:1;
+        if(factor > 1)
+        {
+            mostrarMensaje("Dinámica:\tCreando equivalencia entera.");
+            for(i=0; i<monedasRef.length; i++) monedasRef[i] *= factor;
+        }
         mostrarMensaje("Dinámica:\tCreada tabla de " + (n + 1) + "x" + m + ".");
         //Llenar las entradas para el caso n=0.
         for (i = 0; i < monedas.length; i++) {
@@ -230,10 +237,7 @@ public class DevolverCambio {
         //Llenamos el resto de entradas con una aproximacion de abajo a arriba.
         for (i = 0; i < tabla.length; i++) {
             for (j = 1; j < tabla[i].length; j++) {
-                double valRef = monedas[i];
-                if(valRef < 1)
-                    if(valRef <0.1) valRef *= 100;
-                    else valRef *= 10;
+                double valRef = monedasRef[i];
                 mostrarMensaje("Dinámica:\tevaluando caso: (" + i + "," + j + ")");
                 if (i == 0 && j < valRef) {
                     mostrarMensaje("\t\t\t->Sin solución.");
@@ -250,8 +254,7 @@ public class DevolverCambio {
                     mostrarMensaje("\t\t\t->Determinando mínimo entre (" + i + ","
                             + (int)(j - valRef) + ") y (" + (i - 1) + ","
                             + j + ").");
-                    if (tabla[i - 1][j] < 1 + tabla[i][(int)(j - valRef)] ||
-                            tabla[i][(int)(j-valRef)] == 0) {
+                    if (tabla[i - 1][j] < 1 + tabla[i][(int)(j - valRef)]) {
                         mostrarMensaje("\t\t\t->Tomando valor de (" + (i - 1) + ","
                                 + j + ").");
                         tabla[i][j] = tabla[i - 1][j];
@@ -260,19 +263,14 @@ public class DevolverCambio {
                                 + (int)(j - valRef) + ").");
                         tabla[i][j] = 1 + tabla[i][(int)(j - valRef)];
                     }
-
+                    if(monedas[i] > n && i>0) tabla[i][j] = tabla[i-1][j];
                 }
                 escribirTabla(tabla);
                 System.out.println();
             }
         }
         //Como viene siendo habitual en estos casos, el ultimo elemento de la tabla es la solucion deseada.
-        if(n>=1)
-            return tabla[m - 1][(int)n];
-        else 
-            if(n<0.1)
-                return tabla[m-1][(int)(n/0.01)];
-            else return tabla[m-1][(int)(n/0.1)];
+        return tabla[tabla.length-1][tabla[0].length-1];
     }
 
     private void escribirTabla(int[][] tabla) {

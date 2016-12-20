@@ -6,8 +6,13 @@
 package interfaz;
 
 import devolvercambio.DevolverCambio;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.util.List;
 import java.util.Arrays;
+import java.util.Scanner;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.Box;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -32,6 +37,7 @@ public class menu extends javax.swing.JFrame {
      */
     public menu() {
         initComponents();
+        leerArchivoConfiguracion();
     }
 
     /**
@@ -218,7 +224,57 @@ public class menu extends javax.swing.JFrame {
     }
 
     private void calcularBacktracking(DevolverCambio cambiador, double cambio) {
-        this.jTextResultado.setText(Integer.toString(cambiador.devolverCambioBackTracking(tiposMonedas, monedasDisponibles, cambio)));
+        this.jTextResultado.setText(arrayToString(cambiador.devolverCambioBackTracking(tiposMonedas, monedasDisponibles, cambio)));
+    }
+    
+    private void leerArchivoConfiguracion() {
+        try {
+            Scanner input = new Scanner(new FileReader("configuracion.txt"));
+            String tipos = "";
+            String cantidades = "";
+
+            tipos = input.nextLine();
+            cantidades = input.nextLine();
+
+            System.out.println(tipos);
+            System.out.println(cantidades);
+
+            List<String> tiposDividido = Arrays.asList(tipos.split("\\s*,\\s*"));
+            List<String> cantidadesDividido = Arrays.asList(cantidades.split("\\s*,\\s*"));
+
+            if (tiposDividido.size() != cantidadesDividido.size()) {
+                JOptionPane.showMessageDialog(this,
+                        "El numero de valores en ambas entradas debe ser el mismo",
+                        "Input error",
+                        JOptionPane.ERROR_MESSAGE);
+            } else {
+
+                this.tiposMonedas = new double[tiposDividido.size()];
+                this.monedasDisponibles = new int[cantidadesDividido.size()];
+
+                for (int r = 0; r < this.tiposMonedas.length; r++) {
+                    this.tiposMonedas[r] = Double.valueOf(tiposDividido.get(r));
+                }
+
+                for (int q = 0; q < this.monedasDisponibles.length; q++) {
+                    this.monedasDisponibles[q] = Integer.valueOf(cantidadesDividido.get(q));
+                    this.totalMonedasDisponibles += Integer.valueOf(cantidadesDividido.get(q));
+                }
+
+                System.out.println("Tipos Monedas\n");
+                for (int i = 0; i < this.tiposMonedas.length; i++) {
+                    System.out.println(this.tiposMonedas[i] + "\n");
+                }
+
+                System.out.println("Cantidades Monedas\n");
+                for (int j = 0; j < this.monedasDisponibles.length; j++) {
+                    System.out.println(this.monedasDisponibles[j] + "\n");
+                }
+            }
+
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(menu.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     private void jMenuItemConfiguracionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemConfiguracionActionPerformed
