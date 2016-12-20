@@ -26,14 +26,17 @@ public class DevolverCambio {
         System.err.println(mensaje);
     }
 
-    public int devolverCambioVoraz(double[] monedas, int[] cantidadesMonedas, double cantidad) {
+    public int[] devolverCambioVoraz(double[] monedas, int[] cantidadesMonedas, double cantidad) {
         return voraz(monedas, cantidadesMonedas, cantidad);
     }
 
-    private int voraz(double[] monedas, int[] cantidadMonedas, double cantidad) {
-        double factorMoneda = 0;
+    private int[] voraz(double[] monedas, int[] cantidadMonedas, double cantidad) {
+        int factorMoneda = 0;
         int resultado = 0;
-        double maximoValor = 0;
+        int maximoValor = 0;
+        int[] resultadoTipos = new int[monedas.length];
+        
+        inicializarArray(resultadoTipos);
 
         int[] cantidadesOrdenadas = cantidadMonedas.clone();
         double[] monedasOrdenadas = monedas.clone();
@@ -51,9 +54,10 @@ public class DevolverCambio {
                 System.err.println("Paso " + i + "\n    factor: " + factorMoneda + "\n    cantidad: " + cantidad + "\n    resultado: " + resultado);
                 //Calculamos cuantas monedas tenemos que usar para acercarnos al resultado lo más posible
                 //con el menor numero de monedas posibles.
-                factorMoneda = cantidad / monedasOrdenadas[i];
+                factorMoneda = (int)(cantidad / monedasOrdenadas[i]);
                 maximoValor = (factorMoneda < cantidadesOrdenadas[i]) ? factorMoneda : cantidadesOrdenadas[i];
                 resultado += maximoValor;
+                resultadoTipos[i] += maximoValor;
                 cantidad -= maximoValor * monedasOrdenadas[i];
                 cantidadesOrdenadas[i] -= maximoValor;
                 System.err.println("Paso " + i + "\n    factor: " + factorMoneda + "\n    cantidad: " + cantidad + "\n    resultado: " + resultado + "\n    maximoValor: " + maximoValor);
@@ -61,26 +65,35 @@ public class DevolverCambio {
         }
 
         System.err.println("Paso FINAL" + "\n    factor: " + factorMoneda + "\n    cantidad: " + cantidad + "\n    resultado: " + resultado);
-        return resultado;
+        return resultadoTipos;
     }
 
     public int devolverCambioBackTracking(double[] monedas, int[] cantidadesMonedas, double cantidad) {
         int minimo = Integer.MAX_VALUE;
+        int[] resultadoTipos = new int[monedas.length];
+        
+        inicializarArray(resultadoTipos);
+        
         for (int i = 0; i < monedas.length; i++) {
             mostrarMensaje("Backtracking: Probando con monedas de "+monedas[i]+
                     "€ como raíz.");
             if(monedas[i]>cantidad) break;
-            int valor = backtracking(i, monedas, cantidadesMonedas, cantidad);
+            int valor = backtracking(i, monedas, cantidadesMonedas, cantidad, resultadoTipos);
             minimo = (valor < minimo && valor > -1) ? valor : minimo;
         }
         return (int) minimo;
+    }
+    
+    private void inicializarArray(int[] array) {
+        for(int i = 0; i < array.length; i++)
+            array[i]=0;
     }
 
     public int devolverCambioDinamico(double[] monedas, int[] cantidadMonedas, int m, double n) {
         return dinamico(monedas, cantidadMonedas, m, n);
     }
 
-    private int backtracking(int idxMoneda, double[] monedas, int[] cantidadesMonedas, double cantidad) {
+    private int backtracking(int idxMoneda, double[] monedas, int[] cantidadesMonedas, double cantidad, int[] resultadoTipos) {
         //No hay que devolver nada
         if (cantidad == 0) {
             return 0;	//Devuelve 0 como cantidad de monedas
@@ -113,7 +126,7 @@ public class DevolverCambio {
                             double cambio = cantidad - (double)(x*monedas[idxMoneda]);
                             mostrarMensaje("\tCambio restante: "+cambio);
                             temp = paso_intermedio_backtracking(i, monedas,
-                                    cantidadesMonedas, cambio);
+                                    cantidadesMonedas, cambio, resultadoTipos);
                         }
                         if (temp > -1) {
                             if (res > -1) {
@@ -140,7 +153,7 @@ public class DevolverCambio {
         return -1;
     }
 
-    private int paso_intermedio_backtracking(int idxMoneda, double[] monedas, int[] cantidadesMonedas, double cantidad) {
+    private int paso_intermedio_backtracking(int idxMoneda, double[] monedas, int[] cantidadesMonedas, double cantidad, int[] resultadoTipos) {
         //No hay que devolver nada
         if (cantidad == 0) {
             return 0;	//Devuelve 0 como cantidad de monedas

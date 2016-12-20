@@ -47,12 +47,13 @@ public class menu extends javax.swing.JFrame {
         jLabel2 = new javax.swing.JLabel();
         jButtonCalcularVoraz = new javax.swing.JButton();
         jTextCantidad = new javax.swing.JTextField();
-        jTextResultado = new javax.swing.JTextField();
         jButtonCalcularBacktracking = new javax.swing.JButton();
         jButtonCalcularDinamica = new javax.swing.JButton();
         jLabel3 = new javax.swing.JLabel();
         jTextTiempo = new javax.swing.JTextField();
         jLabel4 = new javax.swing.JLabel();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        jTextResultado = new javax.swing.JTextArea();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
         jMenuItemConfiguracion = new javax.swing.JMenuItem();
@@ -69,8 +70,6 @@ public class menu extends javax.swing.JFrame {
                 jButtonCalcularVorazActionPerformed(evt);
             }
         });
-
-        jTextResultado.setEditable(false);
 
         jButtonCalcularBacktracking.setText("Calcular Backtracking");
         jButtonCalcularBacktracking.addActionListener(new java.awt.event.ActionListener() {
@@ -92,6 +91,11 @@ public class menu extends javax.swing.JFrame {
 
         jLabel4.setText("(En milisegundos)");
 
+        jTextResultado.setEditable(false);
+        jTextResultado.setColumns(20);
+        jTextResultado.setRows(5);
+        jScrollPane1.setViewportView(jTextResultado);
+
         jMenu1.setText("Admin");
 
         jMenuItemConfiguracion.setText("Configuracion");
@@ -110,8 +114,19 @@ public class menu extends javax.swing.JFrame {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(21, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(95, 95, 95)
+                        .addComponent(jLabel1)
+                        .addGap(28, 28, 28)
+                        .addComponent(jTextCantidad, javax.swing.GroupLayout.PREFERRED_SIZE, 84, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(161, 161, 161)
+                        .addComponent(jLabel2)))
+                .addGap(0, 0, Short.MAX_VALUE))
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap(32, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addComponent(jButtonCalcularVoraz)
@@ -123,19 +138,11 @@ public class menu extends javax.swing.JFrame {
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                             .addComponent(jLabel3)
-                            .addComponent(jLabel2)
                             .addComponent(jLabel4))
                         .addGap(28, 28, 28)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(jTextResultado, javax.swing.GroupLayout.DEFAULT_SIZE, 100, Short.MAX_VALUE)
-                            .addComponent(jTextTiempo))
+                        .addComponent(jTextTiempo, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(107, 107, 107))))
-            .addGroup(layout.createSequentialGroup()
-                .addGap(95, 95, 95)
-                .addComponent(jLabel1)
-                .addGap(28, 28, 28)
-                .addComponent(jTextCantidad, javax.swing.GroupLayout.PREFERRED_SIZE, 84, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, Short.MAX_VALUE))
+            .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -149,17 +156,17 @@ public class menu extends javax.swing.JFrame {
                     .addComponent(jButtonCalcularVoraz)
                     .addComponent(jButtonCalcularBacktracking)
                     .addComponent(jButtonCalcularDinamica))
-                .addGap(33, 33, 33)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel2)
-                    .addComponent(jTextResultado, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jLabel2)
+                .addGap(2, 2, 2)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 138, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jTextTiempo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jLabel4)
-                .addContainerGap(46, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         pack();
@@ -190,13 +197,24 @@ public class menu extends javax.swing.JFrame {
         System.out.println(total);
         return cambio <= total;
     }
+    
+    private String arrayToString(int[] array){
+        String out = "";
+        
+        for(int i = 0; i < array.length; i++){
+            //if(array[i] > 0)
+                out += ">Moneda/s de " + this.tiposMonedas[i] + " €: " + array[i] + "\n";
+        }
+        
+        return out;
+    }
 
     private void calcularDinamico(DevolverCambio cambiador, double cambio) {
         this.jTextResultado.setText(Integer.toString(cambiador.devolverCambioDinamico(tiposMonedas, monedasDisponibles, tiposMonedas.length, cambio)));
     }
 
     private void calcularVoraz(DevolverCambio cambiador, double cambio) {
-        this.jTextResultado.setText(Integer.toString(cambiador.devolverCambioVoraz(tiposMonedas, monedasDisponibles, cambio)));
+        this.jTextResultado.setText(arrayToString(cambiador.devolverCambioVoraz(tiposMonedas, monedasDisponibles, cambio)));
     }
 
     private void calcularBacktracking(DevolverCambio cambiador, double cambio) {
@@ -343,8 +361,9 @@ public class menu extends javax.swing.JFrame {
     private javax.swing.JMenu jMenu1;
     private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JMenuItem jMenuItemConfiguracion;
+    private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTextField jTextCantidad;
-    private javax.swing.JTextField jTextResultado;
+    private javax.swing.JTextArea jTextResultado;
     private javax.swing.JTextField jTextTiempo;
     // End of variables declaration//GEN-END:variables
 }
