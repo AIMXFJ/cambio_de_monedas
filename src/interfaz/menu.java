@@ -20,9 +20,9 @@ import javax.swing.JTextField;
  */
 public class menu extends javax.swing.JFrame {
 
-    double[] tiposMonedas = {0.01, 0.02, 0.05, 0.10, 0.20, 0.50, 1, 2};
+    double[] tiposMonedas = {0.10, 0.20, 0.50, 1, 2};
     double totalMonedasDisponibles = 54.8;
-    int[] monedasDisponibles = {10, 10, 10, 11, 12, 13, 14, 15};
+    int[] monedasDisponibles = {11, 12, 13, 14, 15};
 
     /*double[] tiposMonedas = {4,3,2,1};
     double totalMonedasDisponibles = 54;
