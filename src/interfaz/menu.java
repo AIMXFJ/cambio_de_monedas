@@ -6,17 +6,13 @@
 package interfaz;
 
 import devolvercambio.DevolverCambio;
-import java.awt.FlowLayout;
 import java.util.List;
 import java.util.Arrays;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.Box;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
-import javax.swing.border.EmptyBorder;
 
 /**
  *
@@ -24,13 +20,13 @@ import javax.swing.border.EmptyBorder;
  */
 public class menu extends javax.swing.JFrame {
 
-    /*int[] tiposMonedas = {1, 2, 3, 4};
-    int totalMonedasDisponibles = 54;
-    int[] monedasDisponibles = {12, 13, 14, 15};*/
+    double[] tiposMonedas = {0.01, 0.02, 0.05, 0.10, 0.20, 0.50, 1, 2};
+    double totalMonedasDisponibles = 54.8;
+    int[] monedasDisponibles = {10, 10, 10, 11, 12, 13, 14, 15};
 
-    int[] tiposMonedas = {4,3,2,1};
-    int totalMonedasDisponibles = 54;
-    int[] monedasDisponibles = {15,14,13,12};
+    /*double[] tiposMonedas = {4,3,2,1};
+    double totalMonedasDisponibles = 54;
+    int[] monedasDisponibles = {15,14,13,12};*/
     /**
      * Creates new form menu
      */
@@ -171,7 +167,7 @@ public class menu extends javax.swing.JFrame {
 
     private void jButtonCalcularVorazActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonCalcularVorazActionPerformed
         DevolverCambio cambiador = new DevolverCambio();
-        int cambio = Integer.parseInt(jTextCantidad.getText());
+        double cambio = Double.parseDouble(jTextCantidad.getText());
         if (esViable(cambio)) {
             long tiempoIni = System.currentTimeMillis();
             calcularVoraz(cambiador, cambio);
@@ -186,8 +182,8 @@ public class menu extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_jButtonCalcularVorazActionPerformed
 
-    private boolean esViable(int cambio) {
-        int total = 0;
+    private boolean esViable(double cambio) {
+        double total = 0;
         for (int i = 0; i < tiposMonedas.length; i++) {
             total += tiposMonedas[i] * monedasDisponibles[i];
         }
@@ -195,15 +191,15 @@ public class menu extends javax.swing.JFrame {
         return cambio <= total;
     }
 
-    private void calcularDinamico(DevolverCambio cambiador, int cambio) {
+    private void calcularDinamico(DevolverCambio cambiador, double cambio) {
         this.jTextResultado.setText(Integer.toString(cambiador.devolverCambioDinamico(tiposMonedas, monedasDisponibles, tiposMonedas.length, cambio)));
     }
 
-    private void calcularVoraz(DevolverCambio cambiador, int cambio) {
+    private void calcularVoraz(DevolverCambio cambiador, double cambio) {
         this.jTextResultado.setText(Integer.toString(cambiador.devolverCambioVoraz(tiposMonedas, monedasDisponibles, cambio)));
     }
 
-    private void calcularBacktracking(DevolverCambio cambiador, int cambio) {
+    private void calcularBacktracking(DevolverCambio cambiador, double cambio) {
         this.jTextResultado.setText(Integer.toString(cambiador.devolverCambioBackTracking(tiposMonedas, monedasDisponibles, cambio)));
     }
 
@@ -238,9 +234,9 @@ public class menu extends javax.swing.JFrame {
                             JOptionPane.ERROR_MESSAGE);
                 } else {
 
-                    this.tiposMonedas = new int[tipos.size()];
+                    this.tiposMonedas = new double[tipos.size()];
                     this.monedasDisponibles = new int[cantidades.size()];
-                    int total = 0;
+                    double total = 0;
 
                     for (int r = 0; r < this.tiposMonedas.length; r++) {
                         this.tiposMonedas[r] = Integer.valueOf(tipos.get(r));
@@ -269,7 +265,7 @@ public class menu extends javax.swing.JFrame {
 
     private void jButtonCalcularBacktrackingActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonCalcularBacktrackingActionPerformed
         DevolverCambio cambiador = new DevolverCambio();
-        int cambio = Integer.parseInt(jTextCantidad.getText());
+        double cambio = Double.parseDouble(jTextCantidad.getText());
         if (esViable(cambio)) {
             long tiempoIni = System.currentTimeMillis();
             calcularBacktracking(cambiador, cambio);
@@ -286,7 +282,7 @@ public class menu extends javax.swing.JFrame {
 
     private void jButtonCalcularDinamicaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonCalcularDinamicaActionPerformed
         DevolverCambio cambiador = new DevolverCambio();
-        int cambio = Integer.parseInt(jTextCantidad.getText());
+        double cambio = Double.parseDouble(jTextCantidad.getText());
         if (esViable(cambio)) {
             long tiempoIni = System.currentTimeMillis();
             calcularDinamico(cambiador, cambio);

@@ -26,17 +26,17 @@ public class DevolverCambio {
         System.err.println(mensaje);
     }
 
-    public int devolverCambioVoraz(int[] monedas, int[] cantidadesMonedas, int cantidad) {
+    public int devolverCambioVoraz(double[] monedas, int[] cantidadesMonedas, double cantidad) {
         return voraz(monedas, cantidadesMonedas, cantidad);
     }
 
-    private int voraz(int[] monedas, int[] cantidadMonedas, int cantidad) {
-        int factorMoneda = 0;
+    private int voraz(double[] monedas, int[] cantidadMonedas, double cantidad) {
+        double factorMoneda = 0;
         int resultado = 0;
-        int maximoValor = 0;
+        double maximoValor = 0;
 
         int[] cantidadesOrdenadas = cantidadMonedas.clone();
-        int[] monedasOrdenadas = monedas.clone();
+        double[] monedasOrdenadas = monedas.clone();
 
         //Reordenamos las monedas de mayor a menor
         this.quickSort(monedasOrdenadas, cantidadesOrdenadas, 0, monedasOrdenadas.length - 1);
@@ -64,40 +64,40 @@ public class DevolverCambio {
         return resultado;
     }
 
-    public int devolverCambioBackTracking(int[] monedas, int[] cantidadesMonedas, int cantidad) {
-        int minimo = Integer.MAX_VALUE;
+    public int devolverCambioBackTracking(double[] monedas, int[] cantidadesMonedas, double cantidad) {
+        double minimo = Integer.MAX_VALUE;
         for (int i = 0; i < monedas.length; i++) {
-            int valor = backtracking(i, monedas, cantidadesMonedas, cantidad);
+            double valor = backtracking(i, monedas, cantidadesMonedas, cantidad);
             minimo = (valor < minimo && valor > -1) ? valor : minimo;
         }
-        return minimo;
+        return (int) minimo;
     }
 
-    public int devolverCambioDinamico(int[] monedas, int[] cantidadMonedas, int m, int n) {
-        return dinamico(monedas, cantidadMonedas, m, n);
+    public int devolverCambioDinamico(double[] monedas, int[] cantidadMonedas, int m, double n) {
+        return (int) dinamico(monedas, cantidadMonedas, m, n);
     }
 
-    private int backtracking(int idxMoneda, int[] monedas, int[] cantidadesMonedas, int cantidad) {
+    private int backtracking(int idxMoneda, double[] monedas, int[] cantidadesMonedas, double cantidad) {
         //No hay que devolver nada
         if (cantidad == 0) {
             return 0;	//Devuelve 0 como cantidad de monedas
         }	//Comprobar si se puede llegar a devolver cambio
         if (idxMoneda < monedas.length && cantidad > 0) {
             //Toma un maximo numero de monedas a analizar, dependiente de la cantidad a devolver
-            int factorMoneda = cantidad / monedas[idxMoneda];
+            double factorMoneda = cantidad / monedas[idxMoneda];
             //Toma como maximo el minimo entre el numero de monedas que se podrian utilizar de ese tipo y las que hay realmente
-            int maximo_valor = (factorMoneda < cantidadesMonedas[idxMoneda]) ? factorMoneda : cantidadesMonedas[idxMoneda];
+            double maximo_valor = (factorMoneda < cantidadesMonedas[idxMoneda]) ? factorMoneda : cantidadesMonedas[idxMoneda];
             //Establece un coste minimo preliminar
-            int minimo_coste = Integer.MAX_VALUE;
+            double minimo_coste = Integer.MAX_VALUE;
             //Itera por todas las posibles combinaciones de monedas
             for (int x = 1; x <= maximo_valor; x++) {
                 //Si hace falta devolver mas
                 if (cantidad >= x * monedas[idxMoneda]) {
                     //cantidadesMonedas[idxMoneda] -= x * monedas[idxMoneda];
                     //Obtiene la mejor combinacion con el resto de monedas
-                    int res = -1;
+                    double res = -1;
                     for (int i = 0; i < monedas.length; i++) {
-                        int temp = -1;
+                        double temp = -1;
                         int cantidadReal = cantidadesMonedas[idxMoneda];
                         cantidadesMonedas[idxMoneda] = 0;
                         if (i != idxMoneda) {
@@ -123,24 +123,24 @@ public class DevolverCambio {
                 }
             }
             //Devuelve la solucion, de haberla, o -1
-            return (minimo_coste == Integer.MAX_VALUE) ? -1 : minimo_coste;
+            return (int) ((minimo_coste == Integer.MAX_VALUE) ? -1 : minimo_coste);
         }
         //No existe solucion; devuelve -1
         return -1;
     }
 
-    private int paso_intermedio_backtracking(int idxMoneda, int[] monedas, int[] cantidadesMonedas, int cantidad) {
+    private int paso_intermedio_backtracking(int idxMoneda, double[] monedas, int[] cantidadesMonedas, double cantidad) {
         //No hay que devolver nada
         if (cantidad == 0) {
             return 0;	//Devuelve 0 como cantidad de monedas
         }	//Comprobar si se puede llegar a devolver cambio
         if (idxMoneda < monedas.length && cantidad > 0) {
             //Toma un maximo numero de monedas a analizar, dependiente de la cantidad a devolver
-            int factorMoneda = cantidad / monedas[idxMoneda];
+            double factorMoneda = cantidad / monedas[idxMoneda];
             //Toma como maximo el minimo entre el numero de monedas que se podrian utilizar de ese tipo y las que hay realmente
-            int maximo_valor = (factorMoneda < cantidadesMonedas[idxMoneda]) ? factorMoneda : cantidadesMonedas[idxMoneda];
+            double maximo_valor = (factorMoneda < cantidadesMonedas[idxMoneda]) ? factorMoneda : cantidadesMonedas[idxMoneda];
             //Establece un coste minimo preliminar
-            int minimo_coste = Integer.MAX_VALUE;
+            double minimo_coste = Integer.MAX_VALUE;
             //Itera por todas las posibles combinaciones de monedas
             for (int x = 0; x <= maximo_valor; x++) {
                 //Si hace falta devolver mas
@@ -174,16 +174,16 @@ public class DevolverCambio {
                 }
             }
             //Devuelve la solucion, de haberla, o -1
-            return (minimo_coste == Integer.MAX_VALUE) ? factorMoneda : minimo_coste;
+            return (int) ((minimo_coste == Integer.MAX_VALUE) ? factorMoneda : minimo_coste);
         }
         //No existe solucion; devuelve -1
         return -1;
     }
 
-    private int dinamico(int[] monedas, int[] cantidadMonedas, int m, int n) {
+    private double dinamico(double[] monedas, int[] cantidadMonedas, int m, double n) {
         int i, j, x = 0, y = 0;
         //Tabla de n+1 filas. Necesaria porque evaluamos el caso n = 0.
-        int[][] tabla = new int[m][n + 1];
+        double[][] tabla = new double[m][(int)n + 1];
         mostrarMensaje("Dinámica:\tCreada tabla de " + (n + 1) + "x" + m + ".");
         //Llenar las entradas para el caso n=0.
         for (i = 0; i < monedas.length; i++) {
@@ -201,7 +201,7 @@ public class DevolverCambio {
                 } else if (i == 0) {
                     mostrarMensaje("\t\t\t->Tomando valor de (" + i + ","
                             + (j - monedas[i]) + ").");
-                    tabla[i][j] = 1 + tabla[i][j - monedas[i]];
+                    tabla[i][j] = 1 + tabla[i][j - (int)monedas[i]];
                 } else if (j < monedas[i]) {
                     mostrarMensaje("\t\t\t->Tomando valor de (" + (i - 1) + ","
                             + j + ").");
@@ -210,14 +210,14 @@ public class DevolverCambio {
                     mostrarMensaje("\t\t\t->Determinando mínimo entre (" + i + ","
                             + (j - monedas[i]) + ") y (" + (i - 1) + ","
                             + j + ").");
-                    if (tabla[i - 1][j] < 1 + tabla[i][j - monedas[i]]) {
+                    if (tabla[i - 1][j] < 1 + tabla[i][j - (int)monedas[i]]) {
                         mostrarMensaje("\t\t\t->Tomando valor de (" + (i - 1) + ","
                                 + j + ").");
                         tabla[i][j] = tabla[i - 1][j];
                     } else {
                         mostrarMensaje("\t\t\t->Tomando valor de (" + i + ","
                                 + (j - monedas[i]) + ").");
-                        tabla[i][j] = 1 + tabla[i][j - monedas[i]];
+                        tabla[i][j] = 1 + tabla[i][j - (int)monedas[i]];
                     }
 
                 }
@@ -226,10 +226,10 @@ public class DevolverCambio {
             }
         }
         //Como viene siendo habitual en estos casos, el ultimo elemento de la tabla es la solucion deseada.
-        return tabla[m - 1][n];
+        return tabla[m - 1][(int)n];
     }
 
-    private void escribirTabla(int[][] tabla) {
+    private void escribirTabla(double[][] tabla) {
         for (int i = 0; i < tabla.length; i++) {
             for (int j = 0; j < tabla[i].length; j++) {
                 System.out.print(tabla[i][j] + "\t");
@@ -238,18 +238,18 @@ public class DevolverCambio {
         }
     }
 
-    public int[] quickSort(int[] array, int[] cantidades, int low, int high) {
+    public void quickSort(double[] array, int[] cantidades, int low, int high) {
         if (array == null || array.length == 0) {
-            return array;
+            return;
         }
 
         if (low >= high) {
-            return array;
+            return;
         }
 
         // pick the pivot
         int middle = low + (high - low) / 2;
-        int pivot = array[middle];
+        double pivot = array[middle];
         int cantidadPivot = cantidades[middle];
 
         // make left < pivot and right > pivot
@@ -264,7 +264,7 @@ public class DevolverCambio {
             }
 
             if (i <= j) {
-                int temp = array[i];
+                double temp = array[i];
                 array[i] = array[j];
                 array[j] = temp;
 
@@ -285,7 +285,5 @@ public class DevolverCambio {
         if (high > i) {
             quickSort(array, cantidades, i, low);
         }
-
-        return array;
     }
 }
