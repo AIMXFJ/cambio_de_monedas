@@ -27,7 +27,21 @@ public class DevolverCambio {
     }
 
     public int[] devolverCambioVoraz(double[] monedas, int[] cantidadesMonedas, double cantidad) {
-        return voraz(monedas, cantidadesMonedas, cantidad);
+        double[] monedasRef = monedas.clone();
+        
+        //Prepara los datos para el cálculo
+        int factor = 1;
+        long parteEntera = (long)cantidad;
+        while(cantidad*factor-parteEntera!=0)
+        {
+            factor *= 10;
+            parteEntera = (long)(cantidad*factor);
+        } 
+        factor *= 10; //Necesario para evitar problemas con los double
+        for(int i=0; i<monedasRef.length; i++) monedasRef[i] *= factor;
+        cantidad *= factor;
+        
+        return voraz(monedasRef, cantidadesMonedas, cantidad);
     }
 
     private int[] voraz(double[] monedas, int[] cantidadMonedas, double cantidad) {
@@ -51,21 +65,21 @@ public class DevolverCambio {
         //Hay que empezar por las monedas mayores ya que si no es mas dificil ncontrar solucion
         for (int i = 0; i < monedasOrdenadas.length; i++) {
             if (cantidad > 0 && cantidadesOrdenadas[i] > 0) {
-                System.err.println("Paso Antes " + i + "\n    factor: " + factorMoneda + "\n    cantidad: " + cantidad + "\n    resultado: " + resultado);
+                //System.err.println("Paso Antes " + i + "\n    factor: " + factorMoneda + "\n    cantidad: " + cantidad + "\n    resultado: " + resultado);
                 //Calculamos cuantas monedas tenemos que usar para acercarnos al resultado lo más posible
                 //con el menor numero de monedas posibles.
                 factorMoneda = (int)(cantidad / monedasOrdenadas[i]);
                 maximoValor = (factorMoneda < cantidadesOrdenadas[i]) ? factorMoneda : cantidadesOrdenadas[i];
                 resultado += maximoValor;
                 resultadoTipos[resultadoTipos.length-i-1] += maximoValor;
-                System.out.println("Maximo valor: " + maximoValor + " | monedasOrdenadas en " + i + "  " + monedasOrdenadas[i]);
+                //System.out.println("Maximo valor: " + maximoValor + " | monedasOrdenadas en " + i + "  " + monedasOrdenadas[i]);
                 cantidad -= maximoValor * monedasOrdenadas[i];
                 cantidadesOrdenadas[i] -= maximoValor;
-                System.err.println("Paso Despues " + i + "\n    factor: " + factorMoneda + "\n    cantidad: " + cantidad + "\n    resultado: " + resultado + "\n    maximoValor: " + maximoValor);
+                //System.err.println("Paso Despues " + i + "\n    factor: " + factorMoneda + "\n    cantidad: " + cantidad + "\n    resultado: " + resultado + "\n    maximoValor: " + maximoValor);
             }
         }
 
-        System.err.println("Paso FINAL" + "\n    factor: " + factorMoneda + "\n    cantidad: " + cantidad + "\n    resultado: " + resultado);
+        //System.err.println("Paso FINAL" + "\n    factor: " + factorMoneda + "\n    cantidad: " + cantidad + "\n    resultado: " + resultado);
         return resultadoTipos;
     }
     
