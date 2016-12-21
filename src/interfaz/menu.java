@@ -11,8 +11,6 @@ import java.io.FileReader;
 import java.util.List;
 import java.util.Arrays;
 import java.util.Scanner;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.Box;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -25,19 +23,16 @@ import javax.swing.JTextField;
  */
 public class menu extends javax.swing.JFrame {
 
+    //Valores por defecto
     double[] tiposMonedas = {0.10, 0.20, 0.50, 1, 2};
     double totalMonedasDisponibles = 54.8;
     int[] monedasDisponibles = {11, 12, 13, 14, 15};
 
-    /*double[] tiposMonedas = {4,3,2,1};
-    double totalMonedasDisponibles = 54;
-    int[] monedasDisponibles = {15,14,13,12};*/
     /**
      * Creates new form menu
      */
     public menu() {
         initComponents();
-        leerArchivoConfiguracion();
     }
 
     /**
@@ -49,6 +44,10 @@ public class menu extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jMenuBar2 = new javax.swing.JMenuBar();
+        jMenu2 = new javax.swing.JMenu();
+        jMenu3 = new javax.swing.JMenu();
+        jMenuItem1 = new javax.swing.JMenuItem();
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
         jButtonCalcularVoraz = new javax.swing.JButton();
@@ -63,6 +62,16 @@ public class menu extends javax.swing.JFrame {
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
         jMenuItemConfiguracion = new javax.swing.JMenuItem();
+        jMenu4 = new javax.swing.JMenu();
+        jMenuItem2 = new javax.swing.JMenuItem();
+
+        jMenu2.setText("File");
+        jMenuBar2.add(jMenu2);
+
+        jMenu3.setText("Edit");
+        jMenuBar2.add(jMenu3);
+
+        jMenuItem1.setText("jMenuItem1");
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -113,6 +122,18 @@ public class menu extends javax.swing.JFrame {
         jMenu1.add(jMenuItemConfiguracion);
 
         jMenuBar1.add(jMenu1);
+
+        jMenu4.setText("Archivo");
+
+        jMenuItem2.setText("Cargar configuracion");
+        jMenuItem2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem2ActionPerformed(evt);
+            }
+        });
+        jMenu4.add(jMenuItem2);
+
+        jMenuBar1.add(jMenu4);
 
         setJMenuBar(jMenuBar1);
 
@@ -179,9 +200,16 @@ public class menu extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButtonCalcularVorazActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonCalcularVorazActionPerformed
+        /*
+            Calculo del del inpu del usuario con un algoritmo voraz
+        */
+
         DevolverCambio cambiador = new DevolverCambio();
         double cambio = Double.parseDouble(jTextCantidad.getText());
+
+        //Si es un input valido, se calcula, si no se crea un dialogo de error
         if (esViable(cambio)) {
+            //Se cogen los tiempos del sistema para calcular cuanto ha tardado en milisegundos
             long tiempoIni = System.currentTimeMillis();
             calcularVoraz(cambiador, cambio);
             long tiempoFin = System.currentTimeMillis();
@@ -195,6 +223,7 @@ public class menu extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_jButtonCalcularVorazActionPerformed
 
+    //Revisa si merece la pena calcularlo, ya que si no va a tener solucion podemos saberlo de antemano
     private boolean esViable(double cambio) {
         double total = 0;
         for (int i = 0; i < tiposMonedas.length; i++) {
@@ -203,45 +232,56 @@ public class menu extends javax.swing.JFrame {
         System.out.println(total);
         return cambio <= total;
     }
-    
-    private String arrayToString(int[] array){
+
+    //Transforma el array devuelto por un algoritmo en un output entendible para el usuario
+    private String arrayToString(int[] array) {
         String out = "";
-        
-        for(int i = 0; i < array.length; i++){
-            //if(array[i] > 0)
-                out += ">Moneda/s de " + this.tiposMonedas[i] + " €: " + array[i] + "\n";
+        int total = 0;
+
+        for (int i = 0; i < array.length; i++) {
+            out += ">Moneda/s de " + this.tiposMonedas[i] + " €: " + array[i] + "\n";
+            total += array[i];
         }
-        
+
+        //Tratamiento del total de monedas, se revisa si no tiene solucion
+        if (total <= 0) {
+            out += "NO TIENE SOLUCIÓN\n";
+        } else {
+            out += ">Total de monedas = " + total;
+        }
+
         return out;
     }
 
+    //Metodo llamado por el boton correspondiente, muestra el array devuelto por el algoritmo en la interfaz, tras ser transformado
     private void calcularDinamico(DevolverCambio cambiador, double cambio) {
-        this.jTextResultado.setText(Integer.toString(cambiador.devolverCambioDinamico(tiposMonedas, monedasDisponibles, tiposMonedas.length, cambio)));
+        this.jTextResultado.setText(arrayToString(cambiador.devolverCambioDinamico(tiposMonedas, monedasDisponibles, tiposMonedas.length, cambio)));
     }
 
+    //Metodo llamado por el boton correspondiente, muestra el array devuelto por el algoritmo en la interfaz, tras ser transformado
     private void calcularVoraz(DevolverCambio cambiador, double cambio) {
         this.jTextResultado.setText(arrayToString(cambiador.devolverCambioVoraz(tiposMonedas, monedasDisponibles, cambio)));
     }
 
+    //Metodo llamado por el boton correspondiente, muestra el array devuelto por el algoritmo en la interfaz, tras ser transformado
     private void calcularBacktracking(DevolverCambio cambiador, double cambio) {
         this.jTextResultado.setText(arrayToString(cambiador.devolverCambioBackTracking(tiposMonedas, monedasDisponibles, cambio)));
     }
-    
-    private void leerArchivoConfiguracion() {
+
+    //Lee un archivo cuyo nombre es el argumento del metodo y establece la nueva configuracion del programa
+    private void leerArchivoConfiguracion(String archivo) {
         try {
-            Scanner input = new Scanner(new FileReader("configuracion.txt"));
+            Scanner input = new Scanner(new FileReader(archivo));
             String tipos = "";
             String cantidades = "";
 
             tipos = input.nextLine();
             cantidades = input.nextLine();
 
-            System.out.println(tipos);
-            System.out.println(cantidades);
-
             List<String> tiposDividido = Arrays.asList(tipos.split("\\s*,\\s*"));
             List<String> cantidadesDividido = Arrays.asList(cantidades.split("\\s*,\\s*"));
 
+            //Si ambas listas tienen la misma cantidad de elementos es una configuración valida
             if (tiposDividido.size() != cantidadesDividido.size()) {
                 JOptionPane.showMessageDialog(this,
                         "El numero de valores en ambas entradas debe ser el mismo",
@@ -254,29 +294,31 @@ public class menu extends javax.swing.JFrame {
 
                 for (int r = 0; r < this.tiposMonedas.length; r++) {
                     this.tiposMonedas[r] = Double.valueOf(tiposDividido.get(r));
+                    if (this.tiposMonedas[r] < 0) {             //Si en algun momento algun valor es menor que 0, se cuenta como 0
+                        this.tiposMonedas[r] = 0;
+                    }
                 }
 
                 for (int q = 0; q < this.monedasDisponibles.length; q++) {
-                    this.monedasDisponibles[q] = Integer.valueOf(cantidadesDividido.get(q));
-                    this.totalMonedasDisponibles += Integer.valueOf(cantidadesDividido.get(q));
-                }
-
-                System.out.println("Tipos Monedas\n");
-                for (int i = 0; i < this.tiposMonedas.length; i++) {
-                    System.out.println(this.tiposMonedas[i] + "\n");
-                }
-
-                System.out.println("Cantidades Monedas\n");
-                for (int j = 0; j < this.monedasDisponibles.length; j++) {
-                    System.out.println(this.monedasDisponibles[j] + "\n");
+                    if (Integer.valueOf(cantidadesDividido.get(q)) >= 0) {
+                        this.monedasDisponibles[q] = Integer.valueOf(cantidadesDividido.get(q));
+                        this.totalMonedasDisponibles += Integer.valueOf(cantidadesDividido.get(q));
+                    } else {                                            //Si en algun momento algun valor es menor que 0, se cuenta como 0
+                        this.monedasDisponibles[q] = 0;
+                        this.totalMonedasDisponibles += 0;
+                    }
                 }
             }
 
         } catch (FileNotFoundException ex) {
-            Logger.getLogger(menu.class.getName()).log(Level.SEVERE, null, ex);
+            JOptionPane.showMessageDialog(this,
+                    "Archivo no encontrado",
+                    "File Error",
+                    JOptionPane.ERROR_MESSAGE);
         }
     }
 
+    //Realiza lo mismo que leerArchivoConfiguracion pero adaptado a obtener el input de la interfaz
     private void jMenuItemConfiguracionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemConfiguracionActionPerformed
         JTextField tiposField = new JTextField("", 6);
         JTextField valoresField = new JTextField("", 6);
@@ -310,37 +352,34 @@ public class menu extends javax.swing.JFrame {
 
                     this.tiposMonedas = new double[tipos.size()];
                     this.monedasDisponibles = new int[cantidades.size()];
-                    double total = 0;
 
                     for (int r = 0; r < this.tiposMonedas.length; r++) {
                         this.tiposMonedas[r] = Double.valueOf(tipos.get(r));
+                        if (this.tiposMonedas[r] < 0) {
+                            this.tiposMonedas[r] = 0;
+                        }
                     }
 
                     for (int q = 0; q < this.monedasDisponibles.length; q++) {
-                        this.monedasDisponibles[q] = Integer.valueOf(cantidades.get(q));
-                        total += Integer.valueOf(cantidades.get(q));
-                    }
-
-                    this.totalMonedasDisponibles = total;
-
-                    System.out.println("Tipos Monedas\n");
-                    for (int i = 0; i < this.tiposMonedas.length; i++) {
-                        System.out.println(this.tiposMonedas[i] + "\n");
-                    }
-
-                    System.out.println("Cantidades Monedas\n");
-                    for (int j = 0; j < this.monedasDisponibles.length; j++) {
-                        System.out.println(this.monedasDisponibles[j] + "\n");
+                        if (Integer.valueOf(cantidades.get(q)) >= 0) {
+                            this.monedasDisponibles[q] = Integer.valueOf(cantidades.get(q));
+                            this.totalMonedasDisponibles += Integer.valueOf(cantidades.get(q));
+                        } else {
+                            this.monedasDisponibles[q] = 0;
+                            this.totalMonedasDisponibles += 0;
+                        }
                     }
                 }
             }
         }
     }//GEN-LAST:event_jMenuItemConfiguracionActionPerformed
 
+    //Calcula el resultado empleando backtracking
     private void jButtonCalcularBacktrackingActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonCalcularBacktrackingActionPerformed
         DevolverCambio cambiador = new DevolverCambio();
         double cambio = Double.parseDouble(jTextCantidad.getText());
         if (esViable(cambio)) {
+            //Se cogen los tiempos del sistema para calcular cuanto ha tardado en milisegundos
             long tiempoIni = System.currentTimeMillis();
             calcularBacktracking(cambiador, cambio);
             long tiempoFin = System.currentTimeMillis();
@@ -354,10 +393,12 @@ public class menu extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_jButtonCalcularBacktrackingActionPerformed
 
+    //Calcula el resultado empleando programacion dinamica
     private void jButtonCalcularDinamicaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonCalcularDinamicaActionPerformed
         DevolverCambio cambiador = new DevolverCambio();
         double cambio = Double.parseDouble(jTextCantidad.getText());
         if (esViable(cambio)) {
+            //Se cogen los tiempos del sistema para calcular cuanto ha tardado en milisegundos
             long tiempoIni = System.currentTimeMillis();
             calcularDinamico(cambiador, cambio);
             long tiempoFin = System.currentTimeMillis();
@@ -370,6 +411,29 @@ public class menu extends javax.swing.JFrame {
                     JOptionPane.ERROR_MESSAGE);
         }
     }//GEN-LAST:event_jButtonCalcularDinamicaActionPerformed
+
+    //Permite cargar un archivo habiendo introducido su nombre con extension incluida
+    private void jMenuItem2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem2ActionPerformed
+        JTextField archivoField = new JTextField("", 6);
+
+        JPanel panel = new JPanel();
+        panel.add(new JLabel("Nombre del archivo a cargar: "));
+        panel.add(archivoField);
+
+        int result = JOptionPane.showConfirmDialog(null, panel,
+                "Configuración", JOptionPane.OK_CANCEL_OPTION);
+        if (result == JOptionPane.OK_OPTION) {
+            //Si no se ha escrito nada, mostrar error
+            if (archivoField.getText().equals("")) {
+                JOptionPane.showMessageDialog(this,
+                        "Campo vacio",
+                        "Input error",
+                        JOptionPane.ERROR_MESSAGE);
+            } else {
+                leerArchivoConfiguracion(archivoField.getText());
+            }
+        }
+    }//GEN-LAST:event_jMenuItem2ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -415,7 +479,13 @@ public class menu extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JMenu jMenu1;
+    private javax.swing.JMenu jMenu2;
+    private javax.swing.JMenu jMenu3;
+    private javax.swing.JMenu jMenu4;
     private javax.swing.JMenuBar jMenuBar1;
+    private javax.swing.JMenuBar jMenuBar2;
+    private javax.swing.JMenuItem jMenuItem1;
+    private javax.swing.JMenuItem jMenuItem2;
     private javax.swing.JMenuItem jMenuItemConfiguracion;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTextField jTextCantidad;
