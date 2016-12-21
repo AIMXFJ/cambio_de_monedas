@@ -80,37 +80,31 @@ public class DevolverCambio {
         int[] minimoActual = new int[monedas.length];
         double[] monedasRef = monedas.clone();
         
-        int factor = 100;
+        //Prepara los datos para el cálculo
+        int factor = 1;
         long parteEntera = (long)cantidad;
-        /*while(cantidad*factor-parteEntera!=0)
+        while(cantidad*factor-parteEntera!=0)
         {
             factor *= 10;
             parteEntera = (long)(cantidad*factor);
-        }*/ 
+        } 
+        factor *= 10; //Necesario para evitar problemas con los double
         for(int i=0; i<monedasRef.length; i++) monedasRef[i] *= factor;
         cantidad *= factor;
         
         inicializarArray(resultadoTipos);
-        
+        //Calcula todos los árboles y selecciona el mejor
         for (int i = 0; i < monedas.length; i++) {
             if(monedasRef[i]>cantidad) break;
-            mostrarMensaje("Backtracking: Probando con monedas de "+monedasRef[i]+
-                    " cent. como raíz.");
             resultadoTipos = backtracking(i, monedasRef, cantidadesMonedas, cantidad);
-            mostrarMensaje("Backtracking:\tMejor combinación encontrada:\n"
-                    + arrayToString(resultadoTipos));
             if(valorDeArray(resultadoTipos) < minimo && 
                     solucionValida(resultadoTipos))
             {
-                mostrarMensaje("Backtracking:\tEncontrado nuevo mínimo.");
                 minimo = valorDeArray(resultadoTipos);
                 minimoActual = resultadoTipos.clone();
             }
             inicializarArray(resultadoTipos);
-            mostrarMensaje("Backtracking:\tSolución actual:\n\t\t"+
-                    arrayToString(minimoActual));
         }
-        mostrarMensaje("Backtracking:\tMínimo número total de monedas: "+minimo);
         return minimoActual;
     }
     
@@ -155,20 +149,15 @@ public class DevolverCambio {
         if(cantidad%monedas[idxMoneda] == 0 && 
                 cantidad/monedas[idxMoneda] <= cantidadesMonedas[idxMoneda])
         {
-            mostrarMensaje("Backtracking:\tEncontrada solución en "+
-                    monedas[idxMoneda]+": "+(int)(cantidad/monedas[idxMoneda]));
             resultadoTipos[idxMoneda] = (int)(cantidad/monedas[idxMoneda]);
-            mostrarMensaje("\t\t\tCombinación: "+arrayToString(resultadoTipos));
             return resultadoTipos;
         }
-        else{ resultado = Integer.MAX_VALUE;}
-            mostrarMensaje("Backtracking:\tCalculando posibilidades con "+
-                    monedas[idxMoneda]);
+        else{
+            //Caso general, busca el mejor subárbol
+            resultado = Integer.MAX_VALUE;}
             int factorMoneda = (int)(cantidad/monedas[idxMoneda]);
             int maximas_monedas = (factorMoneda<cantidadesMonedas[idxMoneda])?
                     factorMoneda : cantidadesMonedas[idxMoneda];
-            mostrarMensaje("Backtracking:\tMáximo de monedas: "+maximas_monedas
-                    +"; la cantidad a cambiar es "+cantidad);
             int mejor_x = -1;
             int[] resultadoProvisional = new int[resultadoTipos.length];
             //Comprueba todas las posibles combinaciones hasta encontrar una 
@@ -187,34 +176,28 @@ public class DevolverCambio {
                             cantidadesMonedas[i] > 0
                             && monedas[i] <= cantidad-x*monedas[idxMoneda])
                     {
-                        mostrarMensaje("Backtracking:\tComprobando con "+x+" monedas"
-                            + " de "+monedas[idxMoneda]+" y monedas de "+
-                            monedas[i]);
+                        //Obtiene el mejor resultado del hijo
                         resultadoProvisional = backtracking(i, monedas, cantidadesMonedas, 
                                 cantidad-x*monedas[idxMoneda]);
-                        mostrarMensaje("\t\t\tCombinación: "+
-                                arrayToString(resultadoProvisional));
                     }
+                    //Evita corrupción
                     cantidadesMonedas[idxMoneda] = cantidadReal;
+                    //Comprueba si hay que actualizar el mejor caso
                     if(valorDeArray(resultadoProvisional) < resultado
                             && solucionValida(resultadoProvisional)){ 
                         resultado = valorDeArray(resultadoProvisional);
                         mejor_x = x;
-                        mostrarMensaje("Backtracking:\tNuevo mínimo "
-                                + "encontrado: "+resultado+"\n"
-                                + "\t\t\tMejor caso: "+mejor_x);
                         resultadoTipos = resultadoProvisional.clone();
                     }
                 }
             }
             if(resultado < Integer.MAX_VALUE)
             {
+                //Actualiza el array de resultados
                 resultado += mejor_x;
                 resultadoTipos[idxMoneda] = mejor_x;
             }
-            mostrarMensaje("Bactracking:\tMejor caso encontrado para monedas de "
-                    + monedas[idxMoneda]+": "+resultado+"\n"
-                    + "\t\t\tCombinación: "+arrayToString(resultadoTipos));
+            //Devuelve la mejor rama calculada
             return resultadoTipos;
     }
 
@@ -239,17 +222,15 @@ public class DevolverCambio {
             factor *= 10;
             parteEntera = (long)(n*factor);
         }
+        factor *= 10; //Necesario para evitar problemas con los double
         tabla = new int[m][(int)(n*factor+1)];
         double[] monedasRef = monedas.clone();
         if(factor > 1)
         {
-            mostrarMensaje("Dinámica:\tCreando equivalencia entera.");
             for(i=0; i<monedasRef.length; i++) monedasRef[i] *= factor;
         }
-        mostrarMensaje("Dinámica:\tCreada tabla de " + (n + 1) + "x" + m + ".");
         //Llenar las entradas para el caso n=0.
         for (i = 0; i < monedas.length; i++) {
-            mostrarMensaje("Dinámica:\tCreando caso base.");
             tabla[i][0] = 0;
         }
 
@@ -257,59 +238,38 @@ public class DevolverCambio {
         for (i = 0; i < tabla.length; i++) {
             for (j = 1; j < tabla[i].length; j++) {
                 double valRef = monedasRef[i];
-                mostrarMensaje("Dinámica:\tevaluando caso: (" + i + "," + j + ")");
                 if (i == 0 && j < valRef) {
-                    mostrarMensaje("\t\t\t->Sin solución.");
                     tabla[i][j] = 0;
                 } else if (i == 0) {
-                    mostrarMensaje("\t\t\t->Tomando valor de (" + i + ","
-                            + (j - valRef) + ").");
                     tabla[i][j] = 1 + tabla[i][(int)(j - valRef)];
                 } else if (j < valRef) {
-                    mostrarMensaje("\t\t\t->Tomando valor de (" + (i - 1) + ","
-                            + j + ").");
                     tabla[i][j] = tabla[i - 1][j];
-                } else {
-                    mostrarMensaje("\t\t\t->Determinando mínimo entre (" + i + ","
-                            + (int)(j - valRef) + ") y (" + (i - 1) + ","
-                            + j + ").");
+                } else {;
                     if (tabla[i - 1][j] < 1 + tabla[i][(int)(j - valRef)]) {
-                        mostrarMensaje("\t\t\t->Tomando valor de (" + (i - 1) + ","
-                                + j + ").");
                         tabla[i][j] = tabla[i - 1][j];
                     } else {
-                        mostrarMensaje("\t\t\t->Tomando valor de (" + i + ","
-                                + (int)(j - valRef) + ").");
                         tabla[i][j] = 1 + tabla[i][(int)(j - valRef)];
                     }
                     if(monedas[i] > n && i>0) tabla[i][j] = tabla[i-1][j];
                 }
-                escribirTabla(tabla);
                 System.out.println();
             }
         }
+        //Calculamos el número de monedas de cada tipo
         i = tabla.length-1;
         j = tabla[i].length-1;
         int referencia = j;
-        mostrarMensaje("Backtracking:\tGenerando desglose.");
-        if(factor == 0) mostrarMensaje("Backtracking:\t\tAYUDA, EL FACTOR ES 0");
         n*=factor;
         while(i > -1 && j>-1 && n>0)
         {
-            mostrarMensaje("\t\t->Evaluando monedas de "+monedasRef[i]+".\n"
-                    + "\t\t\tValor a cambiar: "+n+
-                    "\t\t\tPosición actual ("+i+","+j+")");
             if(tabla[i][j] == 0)
             {
-                mostrarMensaje("\t\t\tEncontrado último componente de la"
-                        + " solución.");
                 resultadoTipos[i] = tabla[i][referencia];
                 break;
             }
             else
             if((int)(n/monedasRef[i]) == tabla[i][j] && n%monedasRef[i] == 0)
             {
-                mostrarMensaje("\t\t\tEncontrada solución total.");
                 resultadoTipos[i] = tabla[i][j];
                 n=0;
                 break;
@@ -317,15 +277,12 @@ public class DevolverCambio {
             else
             if(i>0)
                 if(monedasRef[i]>n){ 
-                    mostrarMensaje("\t\t\tEl valor de la moneda excede la"
-                            + " cantidad a cambiar.");
                     referencia = j;
                     i--;}
                 else
                 if(tabla[i][j] == tabla[i-1][j] && 
                         tabla[i][j-1] == tabla[i-1][j-1])
                 {
-                    mostrarMensaje("\t\t\tEncontrado valor de cambio de caso.");
                     n+=resultadoTipos[i] * monedasRef[i];
                     resultadoTipos[i] = tabla[i][referencia] - tabla[i][j];
                     referencia = j;
@@ -335,7 +292,6 @@ public class DevolverCambio {
                 else{
                     if(tabla[i][j] < tabla[i][referencia])
                     {
-                        mostrarMensaje("\t\t\tActualizando valor total.");
                         int dif = tabla[i][referencia] - tabla[i][j];
                         if(dif * monedasRef[i] <= n)
                         {
@@ -346,9 +302,9 @@ public class DevolverCambio {
                     j--;
                     }
             else j--;
-            mostrarMensaje("\t\t\tCantidad actual: "+resultadoTipos[i]);
         }
-        //Como viene siendo habitual en estos casos, el ultimo elemento de la tabla es la solucion deseada.
+        //Como viene siendo habitual en estos casos, el ultimo elemento de la 
+        //tabla es la solucion deseada.
         return tabla[tabla.length-1][tabla[0].length-1];
     }
 
