@@ -313,7 +313,7 @@ public class menu extends javax.swing.JFrame {
                     double total = 0;
 
                     for (int r = 0; r < this.tiposMonedas.length; r++) {
-                        this.tiposMonedas[r] = Integer.valueOf(tipos.get(r));
+                        this.tiposMonedas[r] = Double.valueOf(tipos.get(r));
                     }
 
                     for (int q = 0; q < this.monedasDisponibles.length; q++) {
