@@ -78,150 +78,169 @@ public class DevolverCambio {
         int minimo = Integer.MAX_VALUE;
         int[] resultadoTipos = new int[monedas.length];
         int[] minimoActual = new int[monedas.length];
+        double[] monedasRef = monedas.clone();
+        
+        int factor = 100;
+        long parteEntera = (long)cantidad;
+        /*while(cantidad*factor-parteEntera!=0)
+        {
+            factor *= 10;
+            parteEntera = (long)(cantidad*factor);
+        }*/ 
+        for(int i=0; i<monedasRef.length; i++) monedasRef[i] *= factor;
+        cantidad *= factor;
         
         inicializarArray(resultadoTipos);
         
         for (int i = 0; i < monedas.length; i++) {
-            mostrarMensaje("Backtracking: Probando con monedas de "+monedas[i]+
-                    "€ como raíz.");
-            if(monedas[i]>cantidad) break;
-            int valor = backtracking(i, monedas, cantidadesMonedas, cantidad, resultadoTipos);
-            if(valor < minimo)
+            if(monedasRef[i]>cantidad) break;
+            mostrarMensaje("Backtracking: Probando con monedas de "+monedasRef[i]+
+                    " cent. como raíz.");
+            resultadoTipos = backtracking(i, monedasRef, cantidadesMonedas, cantidad);
+            mostrarMensaje("Backtracking:\tMejor combinación encontrada:\n"
+                    + arrayToString(resultadoTipos));
+            if(valorDeArray(resultadoTipos) < minimo && 
+                    solucionValida(resultadoTipos))
             {
-                minimo = valor;
+                mostrarMensaje("Backtracking:\tEncontrado nuevo mínimo.");
+                minimo = valorDeArray(resultadoTipos);
                 minimoActual = resultadoTipos.clone();
             }
             inicializarArray(resultadoTipos);
+            mostrarMensaje("Backtracking:\tSolución actual:\n\t\t"+
+                    arrayToString(minimoActual));
         }
-        resultadoTipos = minimoActual.clone();
         mostrarMensaje("Backtracking:\tMínimo número total de monedas: "+minimo);
+        return minimoActual;
+    }
+    
+    private boolean solucionValida(int[] valores)
+    {
+        for(int i=0; i<valores.length; i++) if(valores[i] != 0) return true;
+        return false;
+    }
+    
+    private int valorDeArray(int[] array)
+    {
+        int sum = 0;
+        for(int i=0; i<array.length; i++)
+            sum += array[i];
+        return sum;
+    }
+    
+    public int[] devolverCambioDinamico(double[] monedas, int[] cantidadMonedas,
+            int m, double n) {
+        int[] resultadoTipos = new int[monedas.length];
+        inicializarArray(resultadoTipos);
+        dinamico(monedas, cantidadMonedas, m, n, resultadoTipos);
         return resultadoTipos;
     }
 
-    public int devolverCambioDinamico(double[] monedas, int[] cantidadMonedas, int m, double n) {
-        return dinamico(monedas, cantidadMonedas, m, n);
-    }
-
-    private int backtracking(int idxMoneda, double[] monedas, int[] cantidadesMonedas, double cantidad, int[] resultadoTipos) {
-        //No hay que devolver nada
-        if (cantidad == 0) {
-            return 0;	//Devuelve 0 como cantidad de monedas
-        }	//Comprobar si se puede llegar a devolver cambio
-        if (idxMoneda < monedas.length && cantidad > 0) {
-            //Toma un maximo numero de monedas a analizar, dependiente de la cantidad a devolver
-            int factorMoneda = (int)(cantidad / monedas[idxMoneda]);
-            //Toma como maximo el minimo entre el numero de monedas que se podrian utilizar de ese tipo y las que hay realmente
-            int maximo_valor = (factorMoneda < cantidadesMonedas[idxMoneda]) ? factorMoneda : cantidadesMonedas[idxMoneda];
-            //Establece un coste minimo preliminar
-            int minimo_coste = Integer.MAX_VALUE;
-            //Itera por todas las posibles combinaciones de monedas
-            for (int x = 1; x <= maximo_valor; x++) {
-                //Si hace falta devolver mas
-                if (cantidad >= x * monedas[idxMoneda]) {
-                    //Obtiene la mejor combinacion con el resto de monedas
-                    int res = -1;
-                    for (int i = 0; i < monedas.length; i++) {
-                        if(monedas[i]>cantidad) break;
-                        int temp = -1;
-                        int cantidadReal = cantidadesMonedas[idxMoneda];
-                        cantidadesMonedas[idxMoneda] = 0;
-                        if (i != idxMoneda) {
-                            double cambio = cantidad - (double)(x*monedas[idxMoneda]);
-                            temp = paso_intermedio_backtracking(i, monedas,
-                                    cantidadesMonedas, cambio, resultadoTipos);
-                        }
-                        if (temp > -1) {
-                            if (res > -1) {
-                                res = (temp < res) ? temp : res;
-                            } else {
-                                res = temp;
-                            }
-                        }
-                        cantidadesMonedas[idxMoneda] = cantidadReal;
-                    }
-                    //Comprueba si hay solucion
-                    if (res != -1) //Si la hay, comprueba si mejora la actual
+    private int[] backtracking(int idxMoneda, double[] monedas, 
+            int[] cantidadesMonedas, double cantidad) {
+        int resultado;
+        int[] resultadoTipos = new int[monedas.length];
+        long parteEntera = (long)cantidad;
+        //Suprime decimales anómalos
+        cantidad = cantidad - (cantidad-parteEntera);
+        if(cantidad > 10 && cantidad % 10 == 9)
+            cantidad++;
+        //Si ya no hay nada que devolver
+        if(cantidad == 0) 
+        {
+            resultadoTipos[idxMoneda] = 0;
+            return resultadoTipos;
+        }
+        //Si la cantidad a devolver es múltiplo del valor de la moneda actual
+        if(cantidad%monedas[idxMoneda] == 0 && 
+                cantidad/monedas[idxMoneda] <= cantidadesMonedas[idxMoneda])
+        {
+            mostrarMensaje("Backtracking:\tEncontrada solución en "+
+                    monedas[idxMoneda]+": "+(int)(cantidad/monedas[idxMoneda]));
+            resultadoTipos[idxMoneda] = (int)(cantidad/monedas[idxMoneda]);
+            mostrarMensaje("\t\t\tCombinación: "+arrayToString(resultadoTipos));
+            return resultadoTipos;
+        }
+        else{ resultado = Integer.MAX_VALUE;}
+            mostrarMensaje("Backtracking:\tCalculando posibilidades con "+
+                    monedas[idxMoneda]);
+            int factorMoneda = (int)(cantidad/monedas[idxMoneda]);
+            int maximas_monedas = (factorMoneda<cantidadesMonedas[idxMoneda])?
+                    factorMoneda : cantidadesMonedas[idxMoneda];
+            mostrarMensaje("Backtracking:\tMáximo de monedas: "+maximas_monedas
+                    +"; la cantidad a cambiar es "+cantidad);
+            int mejor_x = -1;
+            int[] resultadoProvisional = new int[resultadoTipos.length];
+            //Comprueba todas las posibles combinaciones hasta encontrar una 
+            //válida
+            for(int x=1; x<=maximas_monedas; x++)
+            {
+                for(int i=0; i<monedas.length; i++)
+                {
+                    //Limita la posibilidad de usar la moneda actual como hijo
+                    //evitando corrupción en el proceso
+                    int cantidadReal = cantidadesMonedas[idxMoneda];
+                    cantidadesMonedas[idxMoneda] = 0;
+                    int temp = Integer.MAX_VALUE;
+                    //Si el hijo es viable
+                    if(i != idxMoneda &&
+                            cantidadesMonedas[i] > 0
+                            && monedas[i] <= cantidad-x*monedas[idxMoneda])
                     {
-                        minimo_coste = (res + x < minimo_coste) ? res + x : minimo_coste;
-                        if(res+x == minimo_coste) resultadoTipos[idxMoneda] = x;
-                    } else if (x * monedas[idxMoneda] == cantidad) {
-                        minimo_coste = (x < minimo_coste) ? x : minimo_coste;
-                        if(x == minimo_coste) resultadoTipos[idxMoneda] = x;
+                        mostrarMensaje("Backtracking:\tComprobando con "+x+" monedas"
+                            + " de "+monedas[idxMoneda]+" y monedas de "+
+                            monedas[i]);
+                        resultadoProvisional = backtracking(i, monedas, cantidadesMonedas, 
+                                cantidad-x*monedas[idxMoneda]);
+                        mostrarMensaje("\t\t\tCombinación: "+
+                                arrayToString(resultadoProvisional));
+                    }
+                    cantidadesMonedas[idxMoneda] = cantidadReal;
+                    if(valorDeArray(resultadoProvisional) < resultado
+                            && solucionValida(resultadoProvisional)){ 
+                        resultado = valorDeArray(resultadoProvisional);
+                        mejor_x = x;
+                        mostrarMensaje("Backtracking:\tNuevo mínimo "
+                                + "encontrado: "+resultado+"\n"
+                                + "\t\t\tMejor caso: "+mejor_x);
+                        resultadoTipos = resultadoProvisional.clone();
                     }
                 }
             }
-            //Devuelve la solucion, de haberla, o -1
-            return (int) ((minimo_coste == Integer.MAX_VALUE) ? -1 : minimo_coste);
-        }
-        //No existe solucion; devuelve -1
-        return -1;
-    }
-
-    private int paso_intermedio_backtracking(int idxMoneda, double[] monedas, int[] cantidadesMonedas, double cantidad, int[] resultadoTipos) {
-        //No hay que devolver nada
-        if (cantidad == 0) {
-            return 0;	//Devuelve 0 como cantidad de monedas
-        }	//Comprobar si se puede llegar a devolver cambio
-        if (idxMoneda < monedas.length && cantidad > 0) {
-            //Toma un maximo numero de monedas a analizar, dependiente de la cantidad a devolver
-            int factorMoneda = (int) (cantidad / monedas[idxMoneda]);
-            //Toma como maximo el minimo entre el numero de monedas que se podrian utilizar de ese tipo y las que hay realmente
-            int maximo_valor = (factorMoneda < cantidadesMonedas[idxMoneda]) ? factorMoneda : cantidadesMonedas[idxMoneda];
-            //Establece un coste minimo preliminar
-            int minimo_coste = Integer.MAX_VALUE;
-            //Itera por todas las posibles combinaciones de monedas
-            for (int x = 0; x <= maximo_valor; x++) {
-                //Si hace falta devolver mas
-                if (cantidad >= x * monedas[idxMoneda]) {
-                    //Obtiene la mejor combinacion con el resto de monedas
-                    int res = -1;
-                    for (int i = 0; i < monedas.length; i++) {
-                        if(monedas[i]>cantidad) break;
-                        int temp = -1;
-                        int cantidadReal = cantidadesMonedas[idxMoneda];
-                        cantidadesMonedas[idxMoneda] = 0;
-                        if (i != idxMoneda && cantidadesMonedas[i] > 0) {
-                            temp = paso_intermedio_backtracking(i, monedas,
-                                    cantidadesMonedas, cantidad - x * monedas[idxMoneda],
-                                    resultadoTipos);
-                        }
-                        if (temp > -1) {
-                            if (res > -1) {
-                                res = (temp < res) ? temp : res;
-                            } else {
-                                res = temp;
-                            }
-                        }
-                        cantidadesMonedas[idxMoneda] = cantidadReal;
-                    }
-                    //Comprueba si hay solucion
-                    if (res != -1) //Si la hay, comprueba si mejora la actual
-                    {
-                        minimo_coste = (res + x < minimo_coste) ? res + x : minimo_coste;
-                        if(res+x == minimo_coste) resultadoTipos[idxMoneda] = x;
-                    } else if (x * monedas[idxMoneda] == cantidad) {
-                        minimo_coste = (x < minimo_coste) ? x : minimo_coste;
-                        if(x == minimo_coste) resultadoTipos[idxMoneda] = x;
-                    }
-                }
+            if(resultado < Integer.MAX_VALUE)
+            {
+                resultado += mejor_x;
+                resultadoTipos[idxMoneda] = mejor_x;
             }
-            //Devuelve la solucion, de haberla, o -1
-            return (int) ((minimo_coste == Integer.MAX_VALUE) ? factorMoneda : minimo_coste);
-        }
-        //No existe solucion; devuelve -1
-        return -1;
+            mostrarMensaje("Bactracking:\tMejor caso encontrado para monedas de "
+                    + monedas[idxMoneda]+": "+resultado+"\n"
+                    + "\t\t\tCombinación: "+arrayToString(resultadoTipos));
+            return resultadoTipos;
     }
 
-    private int dinamico(double[] monedas, int[] cantidadMonedas, int m, double n) {
+    
+    private String arrayToString(int[] array)
+    {
+        String str = "";
+        for(int i=0; i<array.length; i++)
+            str+=array[i]+", ";
+        return str;
+    }
+
+    private int dinamico(double[] monedas, int[] cantidadMonedas, int m, 
+            double n, int[] resultadoTipos) {
         int i, j, x = 0, y = 0;
         //Tabla de n+1 filas. Necesaria porque evaluamos el caso n = 0.
         int[][] tabla = null;
+        int factor = 1;
         long parteEntera = (long)n;
-        if(n-parteEntera!=0) 
-            tabla = new int[m][(int)(n*10+1)];
-        else tabla = new int[m][(int)(n+1)];
+        while(n*factor-parteEntera!=0)
+        {
+            factor *= 10;
+            parteEntera = (long)(n*factor);
+        }
+        tabla = new int[m][(int)(n*factor+1)];
         double[] monedasRef = monedas.clone();
-        int factor = ((double)(n-parteEntera)!=0)? 10:1;
         if(factor > 1)
         {
             mostrarMensaje("Dinámica:\tCreando equivalencia entera.");
@@ -268,6 +287,66 @@ public class DevolverCambio {
                 escribirTabla(tabla);
                 System.out.println();
             }
+        }
+        i = tabla.length-1;
+        j = tabla[i].length-1;
+        int referencia = j;
+        mostrarMensaje("Backtracking:\tGenerando desglose.");
+        if(factor == 0) mostrarMensaje("Backtracking:\t\tAYUDA, EL FACTOR ES 0");
+        n*=factor;
+        while(i > -1 && j>-1 && n>0)
+        {
+            mostrarMensaje("\t\t->Evaluando monedas de "+monedasRef[i]+".\n"
+                    + "\t\t\tValor a cambiar: "+n+
+                    "\t\t\tPosición actual ("+i+","+j+")");
+            if(tabla[i][j] == 0)
+            {
+                mostrarMensaje("\t\t\tEncontrado último componente de la"
+                        + " solución.");
+                resultadoTipos[i] = tabla[i][referencia];
+                break;
+            }
+            else
+            if((int)(n/monedasRef[i]) == tabla[i][j] && n%monedasRef[i] == 0)
+            {
+                mostrarMensaje("\t\t\tEncontrada solución total.");
+                resultadoTipos[i] = tabla[i][j];
+                n=0;
+                break;
+            }
+            else
+            if(i>0)
+                if(monedasRef[i]>n){ 
+                    mostrarMensaje("\t\t\tEl valor de la moneda excede la"
+                            + " cantidad a cambiar.");
+                    referencia = j;
+                    i--;}
+                else
+                if(tabla[i][j] == tabla[i-1][j] && 
+                        tabla[i][j-1] == tabla[i-1][j-1])
+                {
+                    mostrarMensaje("\t\t\tEncontrado valor de cambio de caso.");
+                    n+=resultadoTipos[i] * monedasRef[i];
+                    resultadoTipos[i] = tabla[i][referencia] - tabla[i][j];
+                    referencia = j;
+                    n -= resultadoTipos[i] * monedasRef[i];
+                    i--;
+                }
+                else{
+                    if(tabla[i][j] < tabla[i][referencia])
+                    {
+                        mostrarMensaje("\t\t\tActualizando valor total.");
+                        int dif = tabla[i][referencia] - tabla[i][j];
+                        if(dif * monedasRef[i] <= n)
+                        {
+                            n -= dif*monedasRef[i];
+                            resultadoTipos[i] += dif;
+                        }                            
+                    }
+                    j--;
+                    }
+            else j--;
+            mostrarMensaje("\t\t\tCantidad actual: "+resultadoTipos[i]);
         }
         //Como viene siendo habitual en estos casos, el ultimo elemento de la tabla es la solucion deseada.
         return tabla[tabla.length-1][tabla[0].length-1];
