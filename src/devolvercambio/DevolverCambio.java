@@ -58,28 +58,28 @@ public class DevolverCambio {
         //Reordenamos las monedas de mayor a menor
         this.quickSort(monedasOrdenadas, cantidadesOrdenadas, 0, monedasOrdenadas.length - 1);
 
-        //for (int x = 0; x < monedasOrdenadas.length; x++) {
-          //  System.out.println("Array Ordenado en " + x + " -> " + monedasOrdenadas[x] + " | cantidad -> " + cantidadesOrdenadas[x]);
-        //}
+        for (int x = 0; x < monedasOrdenadas.length; x++) {
+            System.out.println("Array Ordenado en " + x + " -> " + monedasOrdenadas[x] + " | cantidad -> " + cantidadesOrdenadas[x]);
+        }
 
         //Hay que empezar por las monedas mayores ya que si no es mas dificil ncontrar solucion
         for (int i = 0; i < monedasOrdenadas.length; i++) {
             if (cantidad > 0 && cantidadesOrdenadas[i] > 0) {
-                //System.err.println("Paso Antes " + i + "\n    factor: " + factorMoneda + "\n    cantidad: " + cantidad + "\n    resultado: " + resultado);
+                System.err.println("Inicio bucle " + i + "\n    factor: " + factorMoneda + "\n    cantidad: " + cantidad + "\n    resultado: " + resultado);
                 //Calculamos cuantas monedas tenemos que usar para acercarnos al resultado lo más posible
                 //con el menor numero de monedas posibles.
                 factorMoneda = (int)(cantidad / monedasOrdenadas[i]);
                 maximoValor = (factorMoneda < cantidadesOrdenadas[i]) ? factorMoneda : cantidadesOrdenadas[i];
                 resultado += maximoValor;
                 resultadoTipos[resultadoTipos.length-i-1] += maximoValor;
-                //System.out.println("Maximo valor: " + maximoValor + " | monedasOrdenadas en " + i + "  " + monedasOrdenadas[i]);
+                System.out.println("Maximo valor: " + maximoValor + " | monedasOrdenadas en " + i + "  " + monedasOrdenadas[i]);
                 cantidad -= maximoValor * monedasOrdenadas[i];
                 cantidadesOrdenadas[i] -= maximoValor;
-                //System.err.println("Paso Despues " + i + "\n    factor: " + factorMoneda + "\n    cantidad: " + cantidad + "\n    resultado: " + resultado + "\n    maximoValor: " + maximoValor);
+                System.err.println("Fin bucle " + i + "\n    factor: " + factorMoneda + "\n    cantidad: " + cantidad + "\n    resultado: " + resultado + "\n    maximoValor: " + maximoValor);
             }
         }
 
-        //System.err.println("Paso FINAL" + "\n    factor: " + factorMoneda + "\n    cantidad: " + cantidad + "\n    resultado: " + resultado);
+        System.err.println("Paso FINAL" + "\n    factor: " + factorMoneda + "\n    cantidad: " + cantidad + "\n    resultado: " + resultado);
         return resultadoTipos;
     }
     
@@ -118,6 +118,7 @@ public class DevolverCambio {
                 minimoActual = resultadoTipos.clone();
             }
             inicializarArray(resultadoTipos);
+            mostrarMensaje("Backtracking:\tSolución actual: "+arrayToString(minimoActual));
         }
         return minimoActual;
     }
@@ -153,9 +154,11 @@ public class DevolverCambio {
         cantidad = cantidad - (cantidad-parteEntera);
         if(cantidad > 10 && cantidad % 10 == 9)
             cantidad++;
+        mostrarMensaje("Backtracking:\tEvaluando caso "+monedas[idxMoneda]);
         //Si ya no hay nada que devolver
         if(cantidad == 0) 
         {
+            mostrarMensaje("\t\t\t->No hay que devolver nada.");
             resultadoTipos[idxMoneda] = 0;
             return resultadoTipos;
         }
@@ -163,10 +166,12 @@ public class DevolverCambio {
         if(cantidad%monedas[idxMoneda] == 0 && 
                 cantidad/monedas[idxMoneda] <= cantidadesMonedas[idxMoneda])
         {
+            mostrarMensaje("\t\t\t->Es solución.");
             resultadoTipos[idxMoneda] = (int)(cantidad/monedas[idxMoneda]);
             return resultadoTipos;
         }
         else{
+            mostrarMensaje("\t\t\t->Probando combinaciones.");
             //Caso general, busca el mejor subárbol
             resultado = Integer.MAX_VALUE;}
             int factorMoneda = (int)(cantidad/monedas[idxMoneda]);
@@ -190,6 +195,9 @@ public class DevolverCambio {
                             cantidadesMonedas[i] > 0
                             && monedas[i] <= cantidad-x*monedas[idxMoneda])
                     {
+                        mostrarMensaje("\t\t\t->Probando con"+x+" monedas de "
+                            + monedas[idxMoneda]+" y monedas de "
+                            + monedas[i]+".");
                         //Obtiene el mejor resultado del hijo
                         resultadoProvisional = backtracking(i, monedas, cantidadesMonedas, 
                                 cantidad-x*monedas[idxMoneda]);
@@ -199,6 +207,7 @@ public class DevolverCambio {
                     //Comprueba si hay que actualizar el mejor caso
                     if(valorDeArray(resultadoProvisional) < resultado
                             && solucionValida(resultadoProvisional)){ 
+                        mostrarMensaje("\t\t\t->Nuevo mínimo.");
                         resultado = valorDeArray(resultadoProvisional);
                         mejor_x = x;
                         resultadoTipos = resultadoProvisional.clone();
@@ -243,6 +252,7 @@ public class DevolverCambio {
         {
             for(i=0; i<monedasRef.length; i++) monedasRef[i] *= factor;
         }
+        mostrarMensaje("Dinámica:\tConstruyendo tabla.");
         //Llenar las entradas para el caso n=0.
         for (i = 0; i < monedas.length; i++) {
             tabla[i][0] = 0;
@@ -266,9 +276,11 @@ public class DevolverCambio {
                     }
                     if(monedas[i] > n && i>0) tabla[i][j] = tabla[i-1][j];
                 }
+                escribirTabla(tabla);
                 System.out.println();
             }
         }
+        mostrarMensaje("\t\t\t->Calculando desglose.");
         //Calculamos el número de monedas de cada tipo
         i = tabla.length-1;
         j = tabla[i].length-1;
